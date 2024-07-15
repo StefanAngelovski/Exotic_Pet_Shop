@@ -1,0 +1,56 @@
+{% extends 'layout.html' %}
+{% block title %}Exotic Pet Shop{% endblock %}
+{% block content %}
+    <style>
+        .category-card {
+            display: none;
+        }
+
+        .category-card:nth-child(-n+12) {
+            display: block;
+        }
+
+        .animals:hover{
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+    </style>
+    <div class="container" style="background-color: orange">
+        <h1> Animals </h1>
+        <div class="row">
+            <!-- List all categories -->
+            {% for category in categories %}
+                <div class="col col-md-2 category-card py-2">
+                    <div class="card animals">
+                        <img src="{{ category.image.url }}" alt="IMG">
+                        <div class="card-text p-2">
+                            <h5 style="color: black">{{ category.name }}</h5>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <button id="toggle-button" class="d-flex mx-auto my-2 p-2">View All 62 Categories</button>
+    
+    
+        <h1>Follow us</h1>
+    </div>
+
+    <script>
+        document.getElementById('toggle-button').addEventListener('click', function() {
+            var categories = document.querySelectorAll('.category-card');
+            var button = document.getElementById('toggle-button');
+
+            if (button.textContent === 'View All 62 Categories') {
+                for (var i = 0; i < categories.length; i++) {
+                    categories[i].style.display = 'block';
+                }
+                button.textContent = 'View Less';
+            } else {
+                for (var i = 12; i < categories.length; i++) {
+                    categories[i].style.display = 'none';
+                }
+                button.textContent = 'View All 62 Categories';
+            }
+        });
+    </script>
+{% endblock %}
