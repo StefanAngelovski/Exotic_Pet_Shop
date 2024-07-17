@@ -18,6 +18,44 @@
     .hover-text-orange:hover {
         color: #fd7e14 !important;
     }
+
+
+     input[type="text"], input[type="email"], input[type="tel"], textarea, select {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+        background-color: #2a3040;
+        border: 1px solid #ffd700;
+        color: #ffffff;
+    }
+
+     .search-container {
+        position: relative;
+        display: inline-block;
+    }
+
+    .search-bar {
+        position: absolute;
+        right: 120%;
+        width: 0;
+        top: -10%;
+        border: none;
+        background-color: #2a3040;
+        color: #ffffff;
+        transition: all 0.3s ease-in-out;
+        outline: none;
+        opacity: 0;
+        visibility: hidden;
+        border-radius: 10px;
+        height: 30px;
+    }
+
+    .search-bar.active {
+        width: 300px;
+        padding: 0.5rem;
+        opacity: 1;
+        visibility: visible;
+    }
 </style>
 <body class="text-white d-flex flex-column" style="background-color: rgb(31, 41, 55);">
     <header class="py-4" style="background-color: rgb(17, 24, 39)">
@@ -34,7 +72,10 @@
                 </ul>
             </nav>
             <div class="d-flex justify-content-center">
-                <a href="#"><i class="fa fa-search cursor-pointer text-white hover-text-orange mr-3"></i></a>
+                <div class="search-container">
+                    <input type="text" class="search-bar" style="border-color: white" placeholder="Search...">
+                    <a href="#" class="search-icon"><i class="fa fa-search cursor-pointer text-white hover-text-orange mr-3"></i></a>
+                </div>
                 <a href="{% url 'Store:cart' %}"><i class="fa fa-shopping-cart cursor-pointer text-white hover-text-orange mr-3"></i></a>
                 <a href="{% url 'Store:userProfile' %}"><i class="fa fa-user cursor-pointer text-white hover-text-orange"></i></a>
             </div>
@@ -47,7 +88,7 @@
                 <div class="col-md-3 mb-4">
                     <h3 class="h5 font-weight-bold mb-3">Quick Links</h3>
                     <ul class="list-unstyled">
-                        <li><a href="#" class="text-white hover-text-orange">Home</a></li>
+                        <li><a href="{% url 'Store:index' %}" class="text-white hover-text-orange">Home</a></li>
                         <li><a href="#" class="text-white hover-text-orange">Animals</a></li>
                         <li><a href="#" class="text-white hover-text-orange">Supplies</a></li>
                         <li><a href="#" class="text-white hover-text-orange">Care Guides</a></li>
@@ -69,10 +110,10 @@
                 <div class="col-md-3 mb-4">
                     <h3 class="h5 font-weight-bold mb-3">Follow Us</h3>
                     <div class="d-flex">
-                        <a href="#" class="text-white hover-text-orange mr-3"><i class="fa fa-facebook"></i></a>
-                        <a href="#" class="text-white hover-text-orange mr-3"><i class="fa fa-twitter"></i></a>
-                        <a href="#" class="text-white hover-text-orange mr-3"><i class="fa fa-youtube"></i></a>
-                        <a href="#" class="text-white hover-text-orange"><i class="fa fa-instagram"></i></a>
+                        <a href="https://www.facebook.com/profile.php?id=100093383570742" class="text-white hover-text-orange mr-3"><i class="fa fa-facebook"></i></a>
+                        <a href="https://x.com/TheTarantulaCo1" class="text-white hover-text-orange mr-3"><i class="fa fa-twitter"></i></a>
+                        <a href="https://www.youtube.com/@tarantulacollective" class="text-white hover-text-orange mr-3"><i class="fa fa-youtube"></i></a>
+                        <a href="https://www.instagram.com/exotic_petshop79/" class="text-white hover-text-orange"><i class="fa fa-instagram"></i></a>
                     </div>
                 </div>
             </div>
@@ -81,5 +122,37 @@
             </div>
         </div>
     </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchIcon = document.querySelector('.search-icon');
+            const searchBar = document.querySelector('.search-bar');
+
+            searchIcon.addEventListener('click', (event) => {
+                event.preventDefault();
+                searchBar.classList.toggle('active');
+                if (searchBar.classList.contains('active')) {
+                    searchBar.focus();
+                }
+            });
+
+            // Close search bar when clicking outside
+            document.addEventListener('click', (event) => {
+                if (!searchBar.contains(event.target) && !searchIcon.contains(event.target)) {
+                    searchBar.classList.remove('active');
+                }
+            });
+
+            // Handle search submission
+            searchBar.addEventListener('keypress', (event) => {
+                if (event.key === 'Enter') {
+                    console.log('Searching for:', searchBar.value);
+                    // Implement your search functionality here
+                    searchBar.value = ''; // Clear the search bar
+                    searchBar.classList.remove('active');
+                }
+            });
+        });
+    </script>
 </body>
 </html>

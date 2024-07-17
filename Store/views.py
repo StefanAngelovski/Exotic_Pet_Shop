@@ -23,3 +23,10 @@ def display_cart(request):
 def display_userProfile(request):
     return render(request, 'userProfile.html')
 
+
+def display_register(request):
+    return render(request, 'register.html')
+
+
+def display_login(request):
+    return render(request, 'login.html')

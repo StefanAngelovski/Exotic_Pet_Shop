@@ -8,4 +8,6 @@ urlpatterns = [
     path('contact/', views.display_contact, name='contact'),
     path('cart/', views.display_cart, name='cart'),
     path('userProfile/', views.display_userProfile, name='userProfile'),
+    path('login/', views.display_login, name='login'),
+    path('register/', views.display_register, name='register'),
 ]
