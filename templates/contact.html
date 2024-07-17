@@ -1,0 +1,45 @@
+{% extends 'layout.html' %}
+{% block title %}Contact{% endblock %}
+{% block content %}
+<style>
+    input, textarea {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+    }
+
+    button {
+        background-color: #ffd700;
+        color: #1a2030;
+        padding: 10px 20px;
+        border: none;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background-color: #e6c200;
+    }
+</style>
+<div class="container py-5">
+    <h1 class="mb-8 display-4 font-weight-bold">Contact Exotic Pet Shop</h1>
+
+    <div class="contact-info mb-4 pt-5">
+        <h2>Our Location</h2>
+        <p>123 Exotic Avenue, Wildtown, EX 12345</p>
+        <p>Phone: (555) 123-4567</p>
+        <p>Email: info@exoticpetshop.com</p>
+    </div>
+
+    <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d8378.398832683553!2d21.458211190206104!3d42.06008972833685!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2smk!4v1721207725074!5m2!1sen!2smk" style="width: 100%" height="450" style="border:0;" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+
+    <div class="contact-form pt-5 pb-3">
+        <h2 class="pb-3">Send us a Message</h2>
+        <form>
+            <input type="text" name="name" placeholder="Your Name" required>
+            <input type="email" name="email" placeholder="Your Email" required>
+            <textarea name="message" placeholder="Your Message" rows="5" required></textarea>
+            <button type="submit">Send Message</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

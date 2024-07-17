@@ -1,0 +1,91 @@
+{% extends 'layout.html' %}
+{% block title %}About Us{% endblock %}
+{% block content %}
+<style>
+    .text-orange-500 {
+        color: #fd7e14;
+    }
+</style>
+<div class="container py-5">
+    <h1 class="mb-8 display-4 font-weight-bold">About Exotic Pet Shop</h1>
+    <div class="max-w-4xl mx-auto">
+        <section class="mb-12">
+            <h2 class="font-semibold mb-4 pt-5">Our Story</h2>
+            <p class="mb-4">
+                Founded in 2010, Exotic Pet Shop began as a small family-owned store with a passion for unique and fascinating creatures. Over the years, we've grown into a leading provider of exotic pets, supplies, and expert care advice.
+            </p>
+            <p>
+                Our mission is to connect people with extraordinary animal companions while ensuring the highest standards of animal welfare and customer education.
+            </p>
+        </section>
+
+        <section class="mb-12 pt-3">
+            <h2 class="text-2xl font-semibold mb-4">What Sets Us Apart</h2>
+            <div class="row">
+                <div class="col-md-6 mb-3 d-flex">
+                    <div class="mr-4 text-orange-500"><i class="fas fa-award fa-2x"></i></div>
+                    <div>
+                        <h3 class="font-semibold mb-2">Quality Assurance</h3>
+                        <p>We source our animals from reputable breeders and ensure they receive top-notch care before finding their forever homes.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3 d-flex">
+                    <div class="mr-4 text-orange-500"><i class="fas fa-users fa-2x"></i></div>
+                    <div>
+                        <h3 class="font-semibold mb-2">Expert Staff</h3>
+                        <p>Our team consists of passionate exotic pet enthusiasts with years of experience in animal care and husbandry.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3 d-flex">
+                    <div class="mr-4 text-orange-500"><i class="fas fa-leaf fa-2x"></i></div>
+                    <div>
+                        <h3 class="font-semibold mb-2">Environmental Responsibility</h3>
+                        <p>We're committed to sustainable practices and supporting conservation efforts for exotic species.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3 d-flex">
+                    <div class="mr-4 text-orange-500"><i class="fas fa-phone fa-2x"></i></div>
+                    <div>
+                        <h3 class="font-semibold mb-2">Ongoing Support</h3>
+                        <p>We provide lifelong care advice and support for all our customers and their exotic pets.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-12">
+            <h2 class="text-2xl font-semibold mb-4">Our Team</h2>
+            <div class="row">
+                <div class="col-md-4 mb-3 text-center">
+                    <div class="bg-secondary p-4 rounded-lg">
+                        <img src="/api/placeholder/150/150" alt="Jane Doe" class="w-32 h-32 rounded-circle mx-auto mb-4">
+                        <h3 class="font-semibold mb-2">Jane Doe</h3>
+                        <p class="text-sm">Exotic Pet Specialist</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3 text-center">
+                    <div class="bg-secondary p-4 rounded-lg">
+                        <img src="/api/placeholder/150/150" alt="John Smith" class="w-32 h-32 rounded-circle mx-auto mb-4">
+                        <h3 class="font-semibold mb-2">John Smith</h3>
+                        <p class="text-sm">Exotic Pet Specialist</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3 text-center">
+                    <div class="bg-secondary p-4 rounded-lg">
+                        <img src="/api/placeholder/150/150" alt="Alice Johnson" class="w-32 h-32 rounded-circle mx-auto mb-4">
+                        <h3 class="font-semibold mb-2">Alice Johnson</h3>
+                        <p class="text-sm">Exotic Pet Specialist</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2 class="text-2xl font-semibold mb-4 pt-4">Visit Us</h2>
+            <p class="mb-2">Radishani, Mihael Ivanovski 216544</p>
+            <p class="mb-2">Phone: (+365) 078-123-4567</p>
+            <p>Email: info@exoticpetshop.com</p>
+        </section>
+    </div>
+</div>
+{% endblock %}

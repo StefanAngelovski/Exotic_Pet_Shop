@@ -1,168 +1,89 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Exotic Pet Shop</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css">
-    <style>
-        .hover-text-orange:hover {
-            color: #fd7e14 !important;
-        }
+{% extends 'layout.html' %}
+{% block title %}Exotic Pet Shop{% endblock %}
+{% block content %}
+<style>
+    .category-card {
+        display: none;
+    }
 
-        .hover-bg-orange:hover {
-            background-color: #e55300 !important;
-        }
+    .category-card:nth-child(-n+12) {
+        display: block;
+    }
 
-        .min-h-screen {
-            min-height: 100vh;
-        }
+    .hover-bg-orange:hover {
+        background-color: #e55300 !important;
+    }
+</style>
+<main class="flex-grow container my-4">
+    <section class="mb-5">
+        <h1 class="display-4 font-weight-bold mb-4">Welcome to Exotic Pet Shop</h1>
+        <p class="lead">Discover the perfect companion from our wide selection of exotic pets.</p>
+    </section>
 
-        .category-card {
-            display: none;
-        }
-
-        .category-card:nth-child(-n+12) {
-            display: block;
-        }
-    </style>
-</head>
-<body class="min-h-screen text-white d-flex flex-column" style="background-color: rgb(31, 41, 55)">
-    <header class="py-4" style="background-color: rgb(17, 24, 39)">
-        <div class="container d-flex justify-content-between align-items-center">
-            <!== https://res.cloudinary.com/dk2fdiuvb/image/upload/v1720972855/media/Logos/aukinrub9mln8g1fwlc6.png
-            <img src="" alt="Exotic Pet Shop Logo" class="w-48" />
-            <nav>
-                <ul class="nav">
-                    <li class="nav-item"><a href="#" class="nav-link text-white hover-text-orange">Home</a></li>
-                    <li class="nav-item"><a href="#" class="nav-link text-white hover-text-orange">Animals</a></li>
-                    <li class="nav-item"><a href="#" class="nav-link text-white hover-text-orange">Supplies</a></li>
-                    <li class="nav-item"><a href="#" class="nav-link text-white hover-text-orange">Care Guides</a></li>
-                    <li class="nav-item"><a href="#" class="nav-link text-white hover-text-orange">About Us</a></li>
-                    <li class="nav-item"><a href="#" class="nav-link text-white hover-text-orange">Contact</a></li>
-                </ul>
-            </nav>
-            <div class="d-flex align-items-center">
-                <i class="fa fa-search cursor-pointer text-white hover-text-orange mr-3"></i>
-                <i class="fa fa-shopping-cart cursor-pointer text-white hover-text-orange mr-3"></i>
-                <i class="fa fa-user cursor-pointer text-white hover-text-orange"></i>
-            </div>
+    <section>
+        <div class="bg-warning p-4 rounded-top" style="opacity: 90%">
+            <h2 class="h3 font-weight-bold">Featured Animals</h2>
         </div>
-    </header>
-
-    <main class="flex-grow container my-4">
-        <section class="mb-5">
-            <h1 class="display-4 font-weight-bold mb-4">Welcome to Exotic Pet Shop</h1>
-            <p class="lead">Discover the perfect companion from our wide selection of exotic pets.</p>
-        </section>
-
-        <section>
-            <div class="bg-warning p-4 rounded-top" style="opacity: 90%">
-                <h2 class="h3 font-weight-bold">Featured Animals</h2>
-            </div>
-            <div class="bg-warning p-4 rounded-bottom">
-                <div class="row">
-                    {% for category in categories %}
-                    <div class="col-4 col-md-4 col-lg-2 mb-4 category-card">
-                        <div class="card h-100" style="background-color: rgb(24, 26, 27)">
-                            <img src="{{ category.image.url }}" class="card-img-top" alt="{{ category.name }}">
-                            <div class="card-body text-center">
-                                <h5 class="card-title">{{ category.name }}</h5>
-                                <a href="#" class="btn btn-warning text-white hover-bg-orange">Learn More</a>
-                            </div>
+        <div class="bg-warning p-4 rounded-bottom">
+            <div class="row">
+                {% for category in categories %}
+                <div class="col-4 col-md-4 col-lg-2 mb-4 category-card">
+                    <div class="card h-100" style="background-color: rgb(24, 26, 27)">
+                        <img src="{{ category.image.url }}" class="card-img-top" alt="{{ category.name }}">
+                        <div class="card-body text-center">
+                            <h5 class="card-title text-white">{{ category.name }}</h5>
+                            <a href="#" class="btn btn-warning text-white hover-bg-orange">Learn More</a>
                         </div>
                     </div>
-                    {% endfor %}
                 </div>
-                <div class="text-center mt-4">
-                    <button class="btn btn-dark text-warning font-weight-bold" id="toggle-button" style="background-color: rgb(24, 26, 27)">View All 62 Categories</button>
-                </div>
+                {% endfor %}
             </div>
-        </section>
-
-        <section class="mt-5">
-            <h2 class="h3 font-weight-bold mb-4">Why Choose Us?</h2>
-            <div class="row">
-                <div class="col-md-4 mb-4">
-                    <div class="bg-secondary p-4 rounded">
-                        <h3 class="h5 font-weight-bold">Expert Care</h3>
-                        <p>Our team of experienced professionals ensures the health and well-being of all our animals.</p>
-                    </div>
-                </div>
-                <div class="col-md-4 mb-4">
-                    <div class="bg-secondary p-4 rounded">
-                        <h3 class="h5 font-weight-bold">Wide Selection</h3>
-                        <p>From reptiles to amphibians, we offer a diverse range of exotic pets to suit every preference.</p>
-                    </div>
-                </div>
-                <div class="col-md-4 mb-4">
-                    <div class="bg-secondary p-4 rounded">
-                        <h3 class="h5 font-weight-bold">Education First</h3>
-                        <p>We provide comprehensive care guides and support to ensure you can properly care for your new pet.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <footer class="text-white py-4" style="background-color: rgba(17, 24, 39)">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-3 mb-4">
-                    <h3 class="h5 font-weight-bold mb-3">Quick Links</h3>
-                    <ul class="list-unstyled">
-                        <li><a href="#" class="text-white hover-text-orange">Home</a></li>
-                        <li><a href="#" class="text-white hover-text-orange">Animals</a></li>
-                        <li><a href="#" class="text-white hover-text-orange">Supplies</a></li>
-                        <li><a href="#" class="text-white hover-text-orange">Care Guides</a></li>
-                    </ul>
-                </div>
-                <div class="col-md-3 mb-4">
-                    <h3 class="h5 font-weight-bold mb-3">Customer Service</h3>
-                    <ul class="list-unstyled">
-                        <li><a href="#" class="text-white hover-text-orange">Contact Us</a></li>
-                        <li><a href="#" class="text-white hover-text-orange">FAQ</a></li>
-                        <li><a href="#" class="text-white hover-text-orange">Shipping Information</a></li>
-                        <li><a href="#" class="text-white hover-text-orange">Return Policy</a></li>
-                    </ul>
-                </div>
-                <div class="col-md-3 mb-4">
-                    <h3 class="h5 font-weight-bold mb-3">About Us</h3>
-                    <p>Exotic Pet Shop is dedicated to providing the highest quality exotic pets and supplies, coupled with expert advice and support.</p>
-                </div>
-                <div class="col-md-3 mb-4">
-                    <h3 class="h5 font-weight-bold mb-3">Follow Us</h3>
-                    <div class="d-flex">
-                        <a href="#" class="text-white hover-text-orange mr-3"><i class="fa fa-facebook"></i></a>
-                        <a href="#" class="text-white hover-text-orange mr-3"><i class="fa fa-twitter"></i></a>
-                        <a href="#" class="text-white hover-text-orange mr-3"><i class="fa fa-youtube"></i></a>
-                        <a href="#" class="text-white hover-text-orange"><i class="fa fa-instagram"></i></a>
-                    </div>
-                </div>
-            </div>
-            <div class="mt-4 pt-4 border-top border-light text-center">
-                <p>&copy; 2024 Exotic Pet Shop. All rights reserved.</p>
+            <div class="text-center mt-4">
+                <button class="btn btn-dark text-warning font-weight-bold" id="toggle-button" style="background-color: rgb(24, 26, 27)">View All 62 Categories</button>
             </div>
         </div>
-    </footer>
-    <script>
-        document.getElementById('toggle-button').addEventListener('click', function() {
-            var categories = document.querySelectorAll('.category-card');
-            var button = document.getElementById('toggle-button');
+    </section>
 
-            if (button.textContent === 'View All 62 Categories') {
-                for (var i = 0; i < categories.length; i++) {
-                    categories[i].style.display = 'block';
-                }
-                button.textContent = 'View Less';
-            } else {
-                for (var i = 12; i < categories.length; i++) {
-                    categories[i].style.display = 'none';
-                }
-                button.textContent = 'View All 62 Categories';
+    <section class="mt-5">
+        <h2 class="h3 font-weight-bold mb-4">Why Choose Us?</h2>
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="bg-secondary p-4 rounded">
+                    <h3 class="h5 font-weight-bold">Expert Care</h3>
+                    <p>Our team of experienced professionals ensures the health and well-being of all our animals.</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="bg-secondary p-4 rounded">
+                    <h3 class="h5 font-weight-bold">Wide Selection</h3>
+                    <p>From reptiles to amphibians, we offer a diverse range of exotic pets to suit every preference.</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="bg-secondary p-4 rounded">
+                    <h3 class="h5 font-weight-bold">Education First</h3>
+                    <p>We provide comprehensive care guides and support to ensure you can properly care for your new pet.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+<script>
+    document.getElementById('toggle-button').addEventListener('click', function() {
+        var categories = document.querySelectorAll('.category-card');
+        var button = document.getElementById('toggle-button');
+
+        if (button.textContent === 'View All 62 Categories') {
+            for (var i = 0; i < categories.length; i++) {
+                categories[i].style.display = 'block';
             }
-        });
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"></script>
-</body>
-</html>
+            button.textContent = 'View Less';
+        } else {
+            for (var i = 12; i < categories.length; i++) {
+                categories[i].style.display = 'none';
+            }
+            button.textContent = 'View All 62 Categories';
+        }
+    });
+</script>
+{% endblock %}

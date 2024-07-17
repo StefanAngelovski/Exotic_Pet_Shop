@@ -1,0 +1,191 @@
+{% extends 'layout.html' %}
+{% block title %}User Profile - Exotic Pet Shop{% endblock %}
+{% block content %}
+<style>
+    .profile-container {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+    }
+
+    .profile-section {
+        width: 48%;
+        margin-bottom: 20px;
+    }
+
+    input, textarea, select {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+        background-color: #2a3040;
+        border: 1px solid #ffd700;
+        color: #ffffff;
+    }
+
+    button {
+        background-color: #ffd700;
+        color: #1a2030;
+        padding: 10px 20px;
+        border: none;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background-color: #e6c200;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    th, td {
+        border: 1px solid #ffd700;
+        padding: 10px;
+        text-align: left;
+    }
+
+    th {
+        background-color: #2a3040;
+    }
+</style>
+<div class="container py-5">
+    <h1>User Profile</h1>
+    <div class="profile-container">
+        <div class="profile-section">
+            <h2>Personal Information</h2>
+            <form id="profile-form">
+                <input type="text" id="fullName" name="fullName" placeholder="Full Name" required>
+                <input type="email" id="email" name="email" placeholder="Email Address" required>
+                <input type="tel" id="phone" name="phone" placeholder="Phone Number">
+                <button type="submit">Update Profile</button>
+            </form>
+        </div>
+
+        <div class="profile-section">
+            <h2>Preferences</h2>
+            <form id="preferences-form">
+                <label>
+                    <input type="checkbox" id="newsletter" name="newsletter">
+                    Receive newsletter
+                </label>
+                <br><br>
+                <label>Preferred contact method:</label>
+                <select id="contactMethod" name="contactMethod">
+                    <option value="email">Email</option>
+                    <option value="phone">Phone</option>
+                    <option value="sms">SMS</option>
+                </select>
+                <br><br>
+                <button type="submit">Update Preferences</button>
+            </form>
+        </div>
+
+        <div class="profile-section">
+            <h2>Shipping Details</h2>
+            <form id="shipping-form">
+                <input type="text" id="shippingName" name="shippingName" placeholder="Full Name" required>
+                <textarea id="shippingAddress" name="shippingAddress" placeholder="Address" rows="3" required></textarea>
+                <input type="text" id="shippingCity" name="shippingCity" placeholder="City" required>
+                <input type="text" id="shippingState" name="shippingState" placeholder="State/Province" required>
+                <input type="text" id="shippingZip" name="shippingZip" placeholder="ZIP/Postal Code" required>
+                <select id="shippingCountry" name="shippingCountry" required>
+                    <option value="">Select Country</option>
+                    <option value="US">United States</option>
+                    <option value="CA">Canada</option>
+                    <!-- Add more countries as needed -->
+                </select>
+                <button type="submit">Update Shipping Details</button>
+            </form>
+        </div>
+
+        <div class="profile-section">
+            <h2>Order History</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Date</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="order-history">
+                    <!-- Order history will be populated dynamically -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    // Sample user data (replace with actual user data in a real application)
+    const userData = {
+        fullName: "John Doe",
+        email: "john.doe@example.com",
+        phone: "123-456-7890",
+        newsletter: true,
+        contactMethod: "email",
+        shippingDetails: {
+            name: "John Doe",
+            address: "123 Exotic Ave",
+            city: "Wildtown",
+            state: "EX",
+            zip: "12345",
+            country: "US"
+        },
+        orders: [
+            { id: "ORD001", date: "2023-07-15", total: 149.99, status: "Delivered" },
+            { id: "ORD002", date: "2023-08-02", total: 89.99, status: "Shipped" }
+        ]
+    };
+
+    // Function to populate user data
+    function populateUserData() {
+        document.getElementById('fullName').value = userData.fullName;
+        document.getElementById('email').value = userData.email;
+        document.getElementById('phone').value = userData.phone;
+        document.getElementById('newsletter').checked = userData.newsletter;
+        document.getElementById('contactMethod').value = userData.contactMethod;
+
+        // Populate shipping details
+        document.getElementById('shippingName').value = userData.shippingDetails.name;
+        document.getElementById('shippingAddress').value = userData.shippingDetails.address;
+        document.getElementById('shippingCity').value = userData.shippingDetails.city;
+        document.getElementById('shippingState').value = userData.shippingDetails.state;
+        document.getElementById('shippingZip').value = userData.shippingDetails.zip;
+        document.getElementById('shippingCountry').value = userData.shippingDetails.country;
+
+        const orderHistory = document.getElementById('order-history');
+        userData.orders.forEach(order => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${order.id}</td>
+                <td>${order.date}</td>
+                <td>$${order.total.toFixed(2)}</td>
+                <td>${order.status}</td>
+            `;
+            orderHistory.appendChild(row);
+        });
+    }
+
+    // Call the function when the page loads
+    window.onload = populateUserData;
+
+    // Form submission handling (replace with actual data updating in a real application)
+    document.getElementById('profile-form').onsubmit = function(e) {
+        e.preventDefault();
+        alert('Profile updated successfully! (This is a demo - no actual data was updated)');
+    };
+
+    document.getElementById('preferences-form').onsubmit = function(e) {
+        e.preventDefault();
+        alert('Preferences updated successfully! (This is a demo - no actual data was updated)');
+    };
+
+    document.getElementById('shipping-form').onsubmit = function(e) {
+        e.preventDefault();
+        alert('Shipping details updated successfully! (This is a demo - no actual data was updated)');
+    };
+</script>
+{% endblock %}
