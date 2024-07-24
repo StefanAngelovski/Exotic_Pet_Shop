@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-pdq7cuz1+nrfw%$=uao=k6espbb60=2m2()&!9&po=e9aj9dsf'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'Store'
+    'Store',
+    'ckeditor',
 ]
 
 MIDDLEWARE = [
@@ -73,7 +74,8 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'ExoticPetShop.wsgi.application'
-
+LOGOUT_REDIRECT_URL = 'Store:login'
+AUTHENTICATION_BACKENDS = ['Store.backends.EmailBackend']
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases

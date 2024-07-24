@@ -66,35 +66,17 @@
 <body>
     <div class="register-container">
         <h1>Register</h1>
-        <form id="register-form">
-            <input type="text" id="fullName" name="fullName" placeholder="Full Name" required>
-            <input type="email" id="email" name="email" placeholder="Email" required>
-            <input type="password" id="password" name="password" placeholder="Password" required>
-            <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password" required>
+       <form method="POST">
+            {% csrf_token %}
+            <input type="text" id="fullName" name="{{ form.username.name }}" placeholder="Full Name" required value="{{ form.username.value|default_if_none:'' }}">
+            <input type="email" id="email" name="{{ form.email.name }}" placeholder="Email" required value="{{ form.email.value|default_if_none:'' }}">
+            <input type="password" id="password" name="{{ form.password1.name }}" placeholder="Password" required value="{{ form.password1.value|default_if_none:'' }}">
+            <input type="password" id="confirmPassword" name="{{ form.password2.name }}" placeholder="Confirm Password" required value="{{ form.password2.value|default_if_none:'' }}">
             <button type="submit">Register</button>
         </form>
         <div class="links">
             <a href="{% url 'Store:login' %}">Already have an account? Log in</a>
         </div>
     </div>
-
-    <script>
-        document.getElementById('register-form').onsubmit = function(e) {
-            e.preventDefault();
-            const fullName = document.getElementById('fullName').value;
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
-
-            if (password !== confirmPassword) {
-                alert('Passwords do not match');
-                return;
-            }
-
-            // In a real application, you would send this information to your server
-            console.log('Registration attempt:', { fullName, email, password });
-            alert('Registration functionality would be implemented here. This is just a demo.');
-        };
-    </script>
 </body>
 </html>

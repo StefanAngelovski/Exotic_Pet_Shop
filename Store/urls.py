@@ -10,4 +10,8 @@ urlpatterns = [
     path('userProfile/', views.display_userProfile, name='userProfile'),
     path('login/', views.display_login, name='login'),
     path('register/', views.display_register, name='register'),
+    path('update_profile/', views.update_profile, name='update_profile'),
+    path('update_shipping_details/', views.update_shipping_details, name='update_shipping_details'),
+    path('animal/<int:animal_id>/', views.display_animal, name='animal_details'),
+    path('add_to_cart/<int:animal_id>/', views.add_to_cart, name='add_to_cart'),
 ]

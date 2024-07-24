@@ -2,19 +2,284 @@
 {% block title %}Exotic Pet Shop{% endblock %}
 {% block content %}
 <style>
+    body {
+        color: #ffffff;
+        background-color: #1a202c;
+    }
+
+    .sidebar {
+        width: 250px;
+        height: 100vh;
+        position: fixed;
+        top: 0;
+        padding: 20px;
+        overflow-y: auto;
+        background-color: #2d3748;
+        color: white;
+        border: 1px solid #4a5568;
+    }
+
+    .sidebar-left {
+        left: 0;
+        border-right: 1px solid #4a5568;
+    }
+
+    .sidebar-right {
+        right: 0;
+        border-left: 1px solid #4a5568;
+    }
+
+    .sidebar h3 {
+        color: #f7fafc;
+        margin-bottom: 20px;
+        font-size: 1.3rem;
+        font-weight: bold;
+    }
+
+    .sidebar ul {
+        list-style-type: none;
+        padding-left: 0;
+    }
+
+    .sidebar li {
+        margin-bottom: 10px;
+    }
+
+    .sidebar a {
+        color: #e2e8f0;
+        text-decoration: none;
+        display: block;
+        padding: 8px 10px;
+        border-radius: 5px;
+        transition: all 0.3s ease;
+    }
+
+    .sidebar a:hover {
+        background-color: #4a5568;
+        color: #f7fafc;
+    }
+
+    .sidebar .child-category {
+        margin-left: 20px;
+        display: none;
+    }
+
+    .sidebar .parent-category {
+        cursor: pointer;
+    }
+
+    .sidebar .parent-category::after {
+        content: '\25B6';
+        float: right;
+        transition: transform 0.3s ease;
+    }
+
     .category-card {
         display: none;
     }
 
-    .category-card:nth-child(-n+12) {
+    .category-card:nth-child(-n+25) {
         display: block;
     }
 
     .hover-bg-orange:hover {
-        background-color: #e55300 !important;
+        background-color: #ed8936 !important;
+    }
+
+    .modal-content {
+        background-color: #2d3748;
+        color: #f7fafc;
+    }
+
+    .modal-header {
+        border-bottom: 1px solid #4a5568;
+    }
+
+    .btn-close {
+        color: #f7fafc;
+    }
+
+    .form-control {
+        background-color: #4a5568;
+        color: #f7fafc;
+        border: 1px solid #718096;
+    }
+
+    .form-control:focus {
+        background-color: #4a5568;
+        color: #f7fafc;
+        border-color: #ed8936;
+        box-shadow: 0 0 0 0.2rem rgba(237, 137, 54, 0.25);
+    }
+
+    .btn-primary {
+        background-color: #ed8936;
+        border-color: #ed8936;
+    }
+
+    .btn-primary:hover {
+        background-color: #dd6b20;
+        border-color: #dd6b20;
+    }
+
+     .sidebar-right {
+        background-color: #1a202c;
+        color: #f7fafc;
+    }
+
+    .cart-item {
+        background-color: #2d3748;
+        border-radius: 5px;
+        padding: 12px;
+        margin-bottom: 10px;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .cart-item-remove {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        background: none;
+        border: none;
+        color: #a0aec0;
+        font-size: 1.2rem;
+        cursor: pointer;
+        padding: 0;
+        line-height: 1;
+    }
+
+    .cart-item-name {
+        font-weight: bold;
+        color: #f7fafc;
+        text-align: center;
+        margin-bottom: 8px;
+    }
+
+    .cart-item-details {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.9rem;
+        color: #a0aec0;
+        width: 100%;
+    }
+
+    .cart-item-quantity {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 4px;
+    }
+
+    .cart-item-quantity button {
+        background-color: #4a5568;
+        border: 1px solid #718096;
+        color: #e2e8f0;
+        width: 24px;
+        height: 24px;
+        font-size: 1rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+    }
+
+    .cart-item-quantity input {
+        width: 32px;
+        text-align: center;
+        border: 1px solid #718096;
+        background-color: #2d3748;
+        color: #e2e8f0;
+        margin: 0 4px;
+        padding: 2px 0;
+    }
+
+    .cart-item-price {
+        font-weight: bold;
+        color: #f7fafc;
+        margin-top: 4px;
+    }
+
+    .cart-item select {
+        height: 24px;
+        background-color: #4a5568;
+        color: #e2e8f0;
+        border: 1px solid #718096;
+        padding: 0 4px;
+        width: 80px;
+    }
+
+    .cart-item-row {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        margin-left: -25px;
+    }
+
+    .cart-item-label {
+        width: 40px;
+        text-align: right;
+        padding-right: 8px;
+    }
+
+
+
+    .sidebar .parent-category::after {
+        content: '\25BC';
+        float: right;
+        transition: transform 0.3s ease;
+    }
+
+    .sidebar .parent-category.open::after {
+        transform: rotate(-180deg);
     }
 </style>
 <main class="flex-grow container my-4">
+    <!-- Left Sidebar (Categories) -->
+    <div class="sidebar sidebar-left">
+        <h3>Categories</h3>
+        <ul>
+            <li>
+                <a href="#" class="parent-category" data-category-id="1">Reptiles</a>
+                <ul class="child-categories" id="children-1">
+                    <li class="child-category"><a href="#">Snakes</a></li>
+                    <li class="child-category"><a href="#">Lizards</a></li>
+                    <li class="child-category"><a href="#">Turtles</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#" class="parent-category" data-category-id="2">Amphibians</a>
+                <ul class="child-categories" id="children-2">
+                    <li class="child-category"><a href="#">Frogs</a></li>
+                    <li class="child-category"><a href="#">Salamanders</a></li>
+                    <li class="child-category"><a href="#">Newts</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#" class="parent-category" data-category-id="3">Birds</a>
+                <ul class="child-categories" id="children-3">
+                    <li class="child-category"><a href="#">Parrots</a></li>
+                    <li class="child-category"><a href="#">Finches</a></li>
+                    <li class="child-category"><a href="#">Canaries</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#" class="parent-category" data-category-id="4">Small Mammals</a>
+                <ul class="child-categories" id="children-4">
+                    <li class="child-category"><a href="#">Hamsters</a></li>
+                    <li class="child-category"><a href="#">Gerbils</a></li>
+                    <li class="child-category"><a href="#">Ferrets</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
     <section class="mb-5">
         <h1 class="display-4 font-weight-bold mb-4">Welcome to Exotic Pet Shop</h1>
         <p class="lead">Discover the perfect companion from our wide selection of exotic pets.</p>
@@ -26,23 +291,91 @@
         </div>
         <div class="bg-warning p-4 rounded-bottom">
             <div class="row">
-                {% for category in categories %}
-                <div class="col-4 col-md-4 col-lg-2 mb-4 category-card">
-                    <div class="card h-100" style="background-color: rgb(24, 26, 27)">
-                        <img src="{{ category.image.url }}" class="card-img-top" alt="{{ category.name }}">
-                        <div class="card-body text-center">
-                            <h5 class="card-title text-white">{{ category.name }}</h5>
-                            <a href="#" class="btn btn-warning text-white hover-bg-orange">Learn More</a>
+                {% for animal in animals %}
+                <a href="{% url 'Store:animal_details' animal.id %}">
+                    <div class="col-4 col-md-4 col-lg-2 mb-4 category-card">
+                        <div class="card h-100" style="background-color: rgb(24, 26, 27)">
+                            <img src="{{ animal.image.url }}" class="card-img-top" alt="{{ animal.common_name }}">
+                            <div class="card-body text-center">
+                                <h5 class="card-title text-white">{{ animal.common_name }}</h5>
+                                <p>{{ animal.price|floatformat:"-1" }} €</p>
+                                <a href="#" class="btn btn-warning text-white hover-bg-orange" data-bs-toggle="modal" data-bs-target="#addToCartModal" data-animal-id="{{ animal.id }}">Add to Cart</a>
+                            </div>
                         </div>
                     </div>
-                </div>
+                </a>
                 {% endfor %}
             </div>
             <div class="text-center mt-4">
-                <button class="btn btn-dark text-warning font-weight-bold" id="toggle-button" style="background-color: rgb(24, 26, 27)">View All 62 Categories</button>
+                <button class="btn btn-dark text-warning font-weight-bold" id="toggle-button" style="background-color: rgb(24, 26, 27)">View All {{ animal_count }} Animals</button>
             </div>
         </div>
     </section>
+
+    <!-- Modal -->
+    <div class="modal fade" id="addToCartModal" tabindex="-1" aria-labelledby="addToCartModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addToCartModalLabel">Add to Cart</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addToCartForm" method="POST">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="quantity" class="form-label">Quantity</label>
+                            <input type="number" class="form-control" id="quantity" name="quantity" min="1" value="1">
+                        </div>
+                        <div class="mb-3">
+                            <label for="age" class="form-label">Age</label>
+                            <input type="number" class="form-control" id="age" name="age" min="1" value="1">
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Add to Cart</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Sidebar (Cart) -->
+<div class="sidebar sidebar-right">
+    <h3>Your Cart</h3>
+    <div id="cart-items">
+        {% for cart_item in cart_items %}
+        <div class="cart-item" data-price="{{ cart_item.animal.price }}">
+            <button class="cart-item-remove">&times;</button>
+            <div class="cart-item-name">{{ cart_item.animal.common_name }}</div>
+            <div class="cart-item-details">
+                <div class="cart-item-quantity">
+                    <button class="quantity-decrease">-</button>
+                    <input type="number" value="{{ cart_item.quantity }}" min="1" max="99" class="quantity-input" readonly>
+                    <button class="quantity-increase">+</button>
+                </div>
+                <div class="cart-item-row">
+                    <span class="cart-item-label">Age:</span>
+                    <select id="age" name="age">
+                        <option value="{{ cart_item.age }}" selected>{{ cart_item.age }} year{% if cart_item.age != 1 %}s{% endif %}</option>
+                    </select>
+                </div>
+                <div class="cart-item-row">
+                    <span class="cart-item-label">Sex:</span>
+                    <select id="sex" name="sex">
+                        <option value="M" {% if cart_item.sex == "M" %}selected{% endif %}>Male</option>
+                        <option value="F" {% if cart_item.sex == "F" %}selected{% endif %}>Female</option>
+                    </select>
+                </div>
+            </div>
+            <div class="cart-item-price">${{ cart_item.total_price|floatformat:2 }}</div>
+        </div>
+        {% empty %}
+        <p>Your cart is empty.</p>
+        {% endfor %}
+    </div>
+    <div class="cart-total">
+        Total: ${{ cart.total_price|default:0|floatformat:2 }}
+    </div>
+</div>
 
     <section class="mt-5">
         <h2 class="h3 font-weight-bold mb-4">Why Choose Us?</h2>
@@ -68,12 +401,15 @@
         </div>
     </section>
 </main>
+
+<!-- Searches for current animal count -->
 <script>
     document.getElementById('toggle-button').addEventListener('click', function() {
         var categories = document.querySelectorAll('.category-card');
         var button = document.getElementById('toggle-button');
-
-        if (button.textContent === 'View All 62 Categories') {
+        var animalCount = {{ animal_count }}; // Get the animal count from Django context
+    
+        if (button.textContent === 'View All ' + animalCount + ' Animals') {
             for (var i = 0; i < categories.length; i++) {
                 categories[i].style.display = 'block';
             }
@@ -82,8 +418,67 @@
             for (var i = 12; i < categories.length; i++) {
                 categories[i].style.display = 'none';
             }
-            button.textContent = 'View All 62 Categories';
+            button.textContent = 'View All ' + animalCount + ' Animals';
         }
     });
 </script>
+
+<script>
+    // Updated script for collapsible categories
+    var parentCategories = document.querySelectorAll('.parent-category');
+
+    parentCategories.forEach(function(parent) {
+        parent.addEventListener('click', function(event) {
+            event.preventDefault();
+
+            var categoryId = this.getAttribute('data-category-id');
+            var childCategories = document.getElementById('children-' + categoryId);
+
+            this.classList.toggle('open');
+
+            if (childCategories) {
+                var childItems = childCategories.getElementsByClassName('child-category');
+                for (var i = 0; i < childItems.length; i++) {
+                    childItems[i].style.display = this.classList.contains('open') ? 'block' : 'none';
+                }
+            }
+        });
+    });
+
+    // Script for removing cart items
+    var removeButtons = document.querySelectorAll('.cart-item-remove');
+
+    removeButtons.forEach(function(button) {
+        button.addEventListener('click', function() {
+            var cartItem = this.closest('.cart-item');
+            cartItem.remove();
+            // Here you would also update the cart total and send a request to the server to update the cart
+        });
+    });
+</script>
+
+// Get all "Add to Cart" buttons
+<script>
+    var addToCartButtons = document.querySelectorAll('[data-bs-toggle="modal"][data-bs-target="#addToCartModal"]');
+
+    // Add click event listener to each button
+    addToCartButtons.forEach(function(button) {
+        button.addEventListener('click', function(event) {
+            // Prevent default behavior
+            event.preventDefault();
+
+            // Extract animal ID from data-* attributes
+            var animalId = button.getAttribute('data-animal-id');
+
+            // Update the form action
+            var form = document.getElementById('addToCartForm');
+            form.action = "{% url 'Store:add_to_cart' animal_id=999999 %}".replace('999999', animalId);
+
+            // Show the modal
+            var modal = new bootstrap.Modal(document.getElementById('addToCartModal'));
+            modal.show();
+        });
+    });
+</script>
+    
 {% endblock %}
