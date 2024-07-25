@@ -53,14 +53,14 @@
 
     <div class="checkout-container">
         <div class="checkout-form">
-            <h2 class="pb-4">Shipping Information</h2>
-            <form id="checkout-form">
-                <input type="text" name="name" placeholder="Full Name" required>
-                <input type="email" name="email" placeholder="Email Address" required>
-                <input type="text" name="address" placeholder="Street Address" required>
-                <input type="text" name="city" placeholder="City" required>
-                <input type="text" name="state" placeholder="State/Province" required>
-                <input type="text" name="zip" placeholder="ZIP/Postal Code" required>
+<h2 class="pb-4">Shipping Information</h2>
+        <form id="checkout-form">
+                <input type="text" name="name" placeholder="Full Name" value="{{ user_profile.shipping_name }}" readonly>
+                <input type="email" name="email" placeholder="Email Address" value="{{ request.user.email }}" readonly>
+                <input type="text" name="address" placeholder="Street Address" value="{{ user_profile.shipping_address }}" readonly>
+                <input type="text" name="city" placeholder="City" value="{{ user_profile.shipping_city }}" readonly>
+                <input type="text" name="state" placeholder="State/Province" value="{{ user_profile.shipping_state }}" readonly>
+                <input type="text" name="zip" placeholder="ZIP/Postal Code" value="{{ user_profile.shipping_zip }}" readonly>
 
                 <h2 class="py-4">Payment Information</h2>
                 <input type="text" name="card-number" placeholder="Card Number" required>
@@ -82,51 +82,21 @@
                     </tr>
                 </thead>
                 <tbody id="order-items">
-                    <!-- Order items will be inserted here dynamically -->
+                    {% for cart_item in cart_items %}
+                        <tr>
+                            <td>{{ cart_item.animal.common_name }}</td>
+                            <td>{{ cart_item.animal.price }}</td>
+                        </tr>
+                    {% endfor %}
                 </tbody>
                 <tfoot>
                     <tr>
                         <td><strong>Total</strong></td>
-                        <td id="order-total"><strong>$0.00</strong></td>
+                        <td id="order-total"><strong>{{ cart.total_price }}</strong></td>
                     </tr>
                 </tfoot>
             </table>
         </div>
     </div>
 </div>
-<script>
-    // Sample order data (replace with actual cart data in a real application)
-    const orderItems = [
-        { name: "Leopard Gecko", price: 49.99 },
-        { name: "Ball Python", price: 89.99 },
-        { name: "Terrarium Kit", price: 129.99 }
-    ];
-
-    // Function to populate order summary
-    function populateOrderSummary() {
-        const orderItemsElement = document.getElementById('order-items');
-        let total = 0;
-
-        orderItems.forEach(item => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${item.name}</td>
-                <td>$${item.price.toFixed(2)}</td>
-            `;
-            orderItemsElement.appendChild(row);
-            total += item.price;
-        });
-
-        document.getElementById('order-total').textContent = `$${total.toFixed(2)}`;
-    }
-
-    // Call the function when the page loads
-    window.onload = populateOrderSummary;
-
-    // Form submission handling (replace with actual order processing in a real application)
-    document.getElementById('checkout-form').onsubmit = function(e) {
-        e.preventDefault();
-        alert('Order placed successfully! (This is a demo - no actual order was processed)');
-    };
-</script>
 {% endblock %}

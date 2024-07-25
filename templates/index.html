@@ -59,19 +59,23 @@
         color: #f7fafc;
     }
 
-    .sidebar .child-category {
-        margin-left: 20px;
+     .child-categories {
         display: none;
+        margin-left: 20px;
     }
-
-    .sidebar .parent-category {
-        cursor: pointer;
+    
+    .child-categories.show {
+        display: block;
     }
-
-    .sidebar .parent-category::after {
-        content: '\25B6';
+    
+    .parent-category::after {
+        content: '\25BC';
         float: right;
         transition: transform 0.3s ease;
+    }
+    
+    .parent-category.open::after {
+        transform: rotate(-180deg);
     }
 
     .category-card {
@@ -240,6 +244,34 @@
     .sidebar .parent-category.open::after {
         transform: rotate(-180deg);
     }
+    
+    a:hover{
+        text-decoration: none;
+        color: white;
+    }
+
+    #toggle-button{
+        background-color: rgb(24, 26, 27);
+        display: flex;
+        margin: 2% auto auto;
+    }
+
+
+
+    card {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+    .card-body {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+    .card-footer {
+        margin-top: auto;
+    }
 </style>
 <main class="flex-grow container my-4">
     <!-- Left Sidebar (Categories) -->
@@ -247,44 +279,31 @@
         <h3>Categories</h3>
         <ul>
             <li>
-                <a href="#" class="parent-category" data-category-id="1">Reptiles</a>
-                <ul class="child-categories" id="children-1">
-                    <li class="child-category"><a href="#">Snakes</a></li>
-                    <li class="child-category"><a href="#">Lizards</a></li>
-                    <li class="child-category"><a href="#">Turtles</a></li>
-                </ul>
+                <a href="#" class="parent-category active" data-category-id="all">All Animals</a>
             </li>
+            {% for category in categories %}
             <li>
-                <a href="#" class="parent-category" data-category-id="2">Amphibians</a>
-                <ul class="child-categories" id="children-2">
-                    <li class="child-category"><a href="#">Frogs</a></li>
-                    <li class="child-category"><a href="#">Salamanders</a></li>
-                    <li class="child-category"><a href="#">Newts</a></li>
+                <a href="#" class="parent-category" data-category-id="{{ category.id }}">{{ category.name }}</a>
+                {% if category.category_set.all %}
+                <ul class="child-categories" id="children-{{ category.id }}">
+                    {% for subcategory in category.category_set.all %}
+                    <li class="child-category">
+                        <a href="#" data-category-id="{{ subcategory.id }}" data-parent-id="{{ category.id }}">{{ subcategory.name }}</a>
+                    </li>
+                    {% endfor %}
                 </ul>
+                {% endif %}
             </li>
-            <li>
-                <a href="#" class="parent-category" data-category-id="3">Birds</a>
-                <ul class="child-categories" id="children-3">
-                    <li class="child-category"><a href="#">Parrots</a></li>
-                    <li class="child-category"><a href="#">Finches</a></li>
-                    <li class="child-category"><a href="#">Canaries</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="#" class="parent-category" data-category-id="4">Small Mammals</a>
-                <ul class="child-categories" id="children-4">
-                    <li class="child-category"><a href="#">Hamsters</a></li>
-                    <li class="child-category"><a href="#">Gerbils</a></li>
-                    <li class="child-category"><a href="#">Ferrets</a></li>
-                </ul>
-            </li>
+            {% endfor %}
         </ul>
     </div>
+
     <section class="mb-5">
         <h1 class="display-4 font-weight-bold mb-4">Welcome to Exotic Pet Shop</h1>
         <p class="lead">Discover the perfect companion from our wide selection of exotic pets.</p>
     </section>
 
+    <!-- Animal list -->
     <section>
         <div class="bg-warning p-4 rounded-top" style="opacity: 90%">
             <h2 class="h3 font-weight-bold">Featured Animals</h2>
@@ -293,7 +312,7 @@
             <div class="row">
                 {% for animal in animals %}
                 <a href="{% url 'Store:animal_details' animal.id %}">
-                    <div class="col-4 col-md-4 col-lg-2 mb-4 category-card">
+                    <div class="col-4 col-md-4 col-lg-2 mb-4 category-card" data-category="{{ animal.category.id }}" data-parent-category="{{ animal.category.parent.id|default:animal.category.id }}">
                         <div class="card h-100" style="background-color: rgb(24, 26, 27)">
                             <img src="{{ animal.image.url }}" class="card-img-top" alt="{{ animal.common_name }}">
                             <div class="card-body text-center">
@@ -306,9 +325,7 @@
                 </a>
                 {% endfor %}
             </div>
-            <div class="text-center mt-4">
-                <button class="btn btn-dark text-warning font-weight-bold" id="toggle-button" style="background-color: rgb(24, 26, 27)">View All {{ animal_count }} Animals</button>
-            </div>
+            <button class="btn btn-dark text-warning font-weight-bold" id="toggle-button">View All {{ animal_count }} Animals</button>
         </div>
     </section>
 
@@ -339,43 +356,43 @@
     </div>
 
     <!-- Right Sidebar (Cart) -->
-<div class="sidebar sidebar-right">
-    <h3>Your Cart</h3>
-    <div id="cart-items">
-        {% for cart_item in cart_items %}
-        <div class="cart-item" data-price="{{ cart_item.animal.price }}">
-            <button class="cart-item-remove">&times;</button>
-            <div class="cart-item-name">{{ cart_item.animal.common_name }}</div>
-            <div class="cart-item-details">
-                <div class="cart-item-quantity">
-                    <button class="quantity-decrease">-</button>
-                    <input type="number" value="{{ cart_item.quantity }}" min="1" max="99" class="quantity-input" readonly>
-                    <button class="quantity-increase">+</button>
+    <div class="sidebar sidebar-right">
+        <h3>Your Cart</h3>
+        <div id="cart-items">
+            {% for cart_item in cart_items %}
+            <div class="cart-item" data-price="{{ cart_item.animal.price }}">
+                <button class="cart-item-remove">&times;</button>
+                <div class="cart-item-name">{{ cart_item.animal.common_name }}</div>
+                <div class="cart-item-details">
+                    <div class="cart-item-quantity">
+                        <button class="quantity-decrease">-</button>
+                        <input type="number" value="{{ cart_item.quantity }}" min="1" max="99" class="quantity-input" readonly>
+                        <button class="quantity-increase">+</button>
+                    </div>
+                    <div class="cart-item-row">
+                        <span class="cart-item-label">Age:</span>
+                        <select id="age" name="age">
+                            <option value="{{ cart_item.age }}" selected>{{ cart_item.age }} year{% if cart_item.age != 1 %}s{% endif %}</option>
+                        </select>
+                    </div>
+                    <div class="cart-item-row">
+                        <span class="cart-item-label">Sex:</span>
+                        <select id="sex" name="sex">
+                            <option value="M" {% if cart_item.sex == "M" %}selected{% endif %}>Male</option>
+                            <option value="F" {% if cart_item.sex == "F" %}selected{% endif %}>Female</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="cart-item-row">
-                    <span class="cart-item-label">Age:</span>
-                    <select id="age" name="age">
-                        <option value="{{ cart_item.age }}" selected>{{ cart_item.age }} year{% if cart_item.age != 1 %}s{% endif %}</option>
-                    </select>
-                </div>
-                <div class="cart-item-row">
-                    <span class="cart-item-label">Sex:</span>
-                    <select id="sex" name="sex">
-                        <option value="M" {% if cart_item.sex == "M" %}selected{% endif %}>Male</option>
-                        <option value="F" {% if cart_item.sex == "F" %}selected{% endif %}>Female</option>
-                    </select>
-                </div>
+                <div class="cart-item-price">${{ cart_item.total_price|floatformat:2 }}</div>
             </div>
-            <div class="cart-item-price">${{ cart_item.total_price|floatformat:2 }}</div>
+            {% empty %}
+            <p>Your cart is empty.</p>
+            {% endfor %}
         </div>
-        {% empty %}
-        <p>Your cart is empty.</p>
-        {% endfor %}
+        <div class="cart-total">
+            Total: ${{ cart.total_price|default:0|floatformat:2 }}
+        </div>
     </div>
-    <div class="cart-total">
-        Total: ${{ cart.total_price|default:0|floatformat:2 }}
-    </div>
-</div>
 
     <section class="mt-5">
         <h2 class="h3 font-weight-bold mb-4">Why Choose Us?</h2>
@@ -402,13 +419,13 @@
     </section>
 </main>
 
-<!-- Searches for current animal count -->
 <script>
+    //Searches for current animal count
     document.getElementById('toggle-button').addEventListener('click', function() {
         var categories = document.querySelectorAll('.category-card');
         var button = document.getElementById('toggle-button');
         var animalCount = {{ animal_count }}; // Get the animal count from Django context
-    
+
         if (button.textContent === 'View All ' + animalCount + ' Animals') {
             for (var i = 0; i < categories.length; i++) {
                 categories[i].style.display = 'block';
@@ -424,41 +441,30 @@
 </script>
 
 <script>
-    // Updated script for collapsible categories
-    var parentCategories = document.querySelectorAll('.parent-category');
-
-    parentCategories.forEach(function(parent) {
-        parent.addEventListener('click', function(event) {
-            event.preventDefault();
-
-            var categoryId = this.getAttribute('data-category-id');
-            var childCategories = document.getElementById('children-' + categoryId);
-
-            this.classList.toggle('open');
-
-            if (childCategories) {
-                var childItems = childCategories.getElementsByClassName('child-category');
-                for (var i = 0; i < childItems.length; i++) {
-                    childItems[i].style.display = this.classList.contains('open') ? 'block' : 'none';
+    // Collapsible categories
+    document.addEventListener('DOMContentLoaded', function() {
+        var parentCategories = document.querySelectorAll('.parent-category');
+    
+        parentCategories.forEach(function(parent) {
+            parent.addEventListener('click', function(event) {
+                event.preventDefault();
+    
+                // Toggle the 'open' class on the clicked parent
+                this.classList.toggle('open');
+    
+                var categoryId = this.getAttribute('data-category-id');
+                var childCategories = document.getElementById('children-' + categoryId);
+    
+                if (childCategories) {
+                    childCategories.classList.toggle('show');
                 }
-            }
-        });
-    });
-
-    // Script for removing cart items
-    var removeButtons = document.querySelectorAll('.cart-item-remove');
-
-    removeButtons.forEach(function(button) {
-        button.addEventListener('click', function() {
-            var cartItem = this.closest('.cart-item');
-            cartItem.remove();
-            // Here you would also update the cart total and send a request to the server to update the cart
+            });
         });
     });
 </script>
 
-// Get all "Add to Cart" buttons
 <script>
+    // Get all "Add to Cart" buttons
     var addToCartButtons = document.querySelectorAll('[data-bs-toggle="modal"][data-bs-target="#addToCartModal"]');
 
     // Add click event listener to each button
@@ -480,5 +486,91 @@
         });
     });
 </script>
-    
+
+<script>
+    //3D Tilt effect on cards hover
+    document.addEventListener('DOMContentLoaded', function() {
+        const cards = document.querySelectorAll('.category-card .card');
+
+        cards.forEach(card => {
+            card.addEventListener('mousemove', handleMouseMove);
+            card.addEventListener('mouseleave', handleMouseLeave);
+        });
+
+        function handleMouseMove(e) {
+            const card = this;
+            const cardRect = card.getBoundingClientRect();
+            const cardCenterX = cardRect.left + cardRect.width / 2;
+            const cardCenterY = cardRect.top + cardRect.height / 2;
+            const mouseX = e.clientX - cardCenterX;
+            const mouseY = e.clientY - cardCenterY;
+            const rotateY = (mouseX / cardRect.width) * 20;
+            const rotateX = -(mouseY / cardRect.height) * 20;
+
+            card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.05)`;
+        }
+
+        function handleMouseLeave(e) {
+            this.style.transform = 'rotateX(0) rotateY(0) scale(1)';
+        }
+    });
+</script>
+
+<script>
+    // Filter animals by category
+    document.addEventListener('DOMContentLoaded', function() {
+        const categoryLinks = document.querySelectorAll('.sidebar-left a');
+        const animalCards = document.querySelectorAll('.category-card');
+
+        // Animation parameters
+        const animationDuration = 400; // in milliseconds
+        const delayBetweenCards = 20; // in milliseconds
+
+        categoryLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const categoryId = this.getAttribute('data-category-id');
+                const parentId = this.getAttribute('data-parent-id');
+
+                categoryLinks.forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+
+                filterAnimals(categoryId, parentId);
+            });
+        });
+
+        function filterAnimals(categoryId, parentId) {
+            let visibleCardIndex = 0;
+            var button = document.getElementById('toggle-button');
+            animalCards.forEach((card) => {
+                const cardCategory = card.getAttribute('data-category');
+                const cardParentCategory = card.getAttribute('data-parent-category');
+
+                card.style.opacity = '0';
+                card.style.transform = 'translateX(-20px)';
+                card.style.display = 'none';
+
+                if (categoryId === 'all' ||
+                    cardCategory === categoryId ||
+                    cardParentCategory === categoryId) {
+                    card.style.display = 'block';
+                    setTimeout(() => {
+                        card.style.transition = `opacity ${animationDuration}ms ease, transform ${animationDuration}ms ease`;
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateX(0)';
+                    }, visibleCardIndex * delayBetweenCards);
+                    visibleCardIndex++;
+                }
+            });
+
+            // Show the "View All" button based on the number of visible cards
+            if (visibleCardIndex > 12) {
+                button.style.display = 'block';
+                button.textContent = 'View Less';
+            } else {
+                button.style.display = 'none';
+            }
+        }
+    });
+</script>
 {% endblock %}

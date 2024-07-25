@@ -12,18 +12,16 @@ def display_index(request):
     animals = Animal.objects.all()
     animal_count = animals.count()
     user_profile = UserProfile.objects.get(user=request.user)
-    if user_profile.cart is None:  # Check if the user_profile has an associated cart
-        user_profile.cart = Cart.objects.create(user=request.user)
-        user_profile.save()
-    cart_items = user_profile.cart.cart_items.all()  # Get the cart items for the current user
+    cart_items = user_profile.cart.cart_items.all()
 
-    # Calculate the total price for each cart item
     for cart_item in cart_items:
         cart_item.total_price = cart_item.animal.price * cart_item.quantity
 
-    cart = user_profile.cart  # Get the cart for the current user
+    # Query for top-level categories (those without parents)
+    categories = Category.objects.filter(parent__isnull=True).prefetch_related('category_set')
+    cart = user_profile.cart
     return render(request, 'index.html',
-                  {'animals': animals, 'animal_count': animal_count, 'cart_items': cart_items, 'cart': cart})
+                  {'animals': animals, 'animal_count': animal_count, 'cart_items': cart_items, 'cart': cart, 'categories': categories})
 
 
 def display_about(request):
@@ -35,7 +33,11 @@ def display_contact(request):
 
 
 def display_cart(request):
-    return render(request, 'cart.html')
+    user = request.user
+    user_profile = UserProfile.objects.get(user=user)  # Fetch the UserProfile for the current user
+    cart = Cart.objects.get(user=user)  # Fetch the cart for the current user
+    cart_items = cart.cart_items.all()  # Fetch all items in the cart
+    return render(request, 'cart.html', {'cart_items': cart_items, 'cart': cart, 'user_profile': user_profile})
 
 
 def display_userProfile(request):
@@ -99,6 +101,8 @@ def display_login(request):
         user = authenticate(request, username=email, password=password)
         if user is not None:
             login(request, user)
+            # Create a cart for the user if it doesn't exist
+            Cart.objects.get_or_create(user=user)
             messages.success(request, 'Logged in successfully')
             return redirect('Store:userProfile')
         else:
@@ -116,10 +120,6 @@ def display_animal(request, animal_id):
 def add_to_cart(request, animal_id):
     animal = get_object_or_404(Animal, id=animal_id)
     cart = request.user.userprofile.cart
-    if cart is None:
-        cart = Cart.objects.create(user=request.user)
-        request.user.userprofile.cart = cart
-        request.user.userprofile.save()
     if request.method == 'POST':
         quantity = int(request.POST.get('quantity'))
         age = request.POST.get('age')

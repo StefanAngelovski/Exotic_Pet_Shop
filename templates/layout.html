@@ -11,8 +11,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
     <!-- Font Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 <style>
     .hover-text-orange:hover {
@@ -93,7 +92,7 @@
                     <h3 class="h5 font-weight-bold mb-3">Quick Links</h3>
                     <ul class="list-unstyled">
                         <li><a href="{% url 'Store:index' %}" class="text-white hover-text-orange">Home</a></li>
-                        <li><a href="#" class="text-white hover-text-orange">Animals</a></li>
+                        <li><a href="#" class="text-white hover-text-orange">Feeders</a></li>
                         <li><a href="#" class="text-white hover-text-orange">Supplies</a></li>
                         <li><a href="#" class="text-white hover-text-orange">Care Guides</a></li>
                     </ul>
@@ -103,7 +102,7 @@
                     <ul class="list-unstyled">
                         <li><a href="{% url 'Store:contact' %}" class="text-white hover-text-orange">Contact Us</a></li>
                         <li><a href="#" class="text-white hover-text-orange">FAQ</a></li>
-                        <li><a href="#" class="text-white hover-text-orange">Shipping Information</a></li>
+                        <li><a href="{% url 'Store:userProfile' %}" class="text-white hover-text-orange">Shipping Information</a></li>
                         <li><a href="#" class="text-white hover-text-orange">Return Policy</a></li>
                     </ul>
                 </div>
@@ -116,7 +115,7 @@
                     <div class="d-flex">
                         <a href="https://www.facebook.com/profile.php?id=100093383570742" class="text-white hover-text-orange mr-3"><i class="fa fa-facebook"></i></a>
                         <a href="https://x.com/TheTarantulaCo1" class="text-white hover-text-orange mr-3"><i class="fa fa-twitter"></i></a>
-                        <a href="https://www.youtube.com/@tarantulacollective" class="text-white hover-text-orange mr-3"><i class="fa fa-youtube"></i></a>
+                        <a href="https://www.youtube.com/@tarantulacollective" class="text-white hover-text-orange mr-3"><i class="fa fa-youtube-play"></i></a>
                         <a href="https://www.instagram.com/exotic_petshop79/" class="text-white hover-text-orange"><i class="fa fa-instagram"></i></a>
                     </div>
                 </div>
