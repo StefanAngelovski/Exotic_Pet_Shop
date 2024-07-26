@@ -418,27 +418,7 @@
         </div>
     </section>
 </main>
-
-<script>
-    //Searches for current animal count
-    document.getElementById('toggle-button').addEventListener('click', function() {
-        var categories = document.querySelectorAll('.category-card');
-        var button = document.getElementById('toggle-button');
-        var animalCount = {{ animal_count }}; // Get the animal count from Django context
-
-        if (button.textContent === 'View All ' + animalCount + ' Animals') {
-            for (var i = 0; i < categories.length; i++) {
-                categories[i].style.display = 'block';
-            }
-            button.textContent = 'View Less';
-        } else {
-            for (var i = 12; i < categories.length; i++) {
-                categories[i].style.display = 'none';
-            }
-            button.textContent = 'View All ' + animalCount + ' Animals';
-        }
-    });
-</script>
+    
 
 <script>
     // Collapsible categories
@@ -521,56 +501,88 @@
     document.addEventListener('DOMContentLoaded', function() {
         const categoryLinks = document.querySelectorAll('.sidebar-left a');
         const animalCards = document.querySelectorAll('.category-card');
-
-        // Animation parameters
+        const toggleButton = document.getElementById('toggle-button');
+    
         const animationDuration = 400; // in milliseconds
         const delayBetweenCards = 20; // in milliseconds
-
+    
+        let currentCategory = 'all';
+        let visibleCards = [];
+    
         categoryLinks.forEach(link => {
             link.addEventListener('click', function(e) {
                 e.preventDefault();
                 const categoryId = this.getAttribute('data-category-id');
                 const parentId = this.getAttribute('data-parent-id');
-
+    
                 categoryLinks.forEach(l => l.classList.remove('active'));
                 this.classList.add('active');
-
+    
+                currentCategory = categoryId;
                 filterAnimals(categoryId, parentId);
             });
         });
-
+    
         function filterAnimals(categoryId, parentId) {
+            visibleCards = [];
             let visibleCardIndex = 0;
-            var button = document.getElementById('toggle-button');
+    
             animalCards.forEach((card) => {
                 const cardCategory = card.getAttribute('data-category');
                 const cardParentCategory = card.getAttribute('data-parent-category');
-
+    
                 card.style.opacity = '0';
                 card.style.transform = 'translateX(-20px)';
                 card.style.display = 'none';
-
+    
                 if (categoryId === 'all' ||
                     cardCategory === categoryId ||
                     cardParentCategory === categoryId) {
-                    card.style.display = 'block';
-                    setTimeout(() => {
-                        card.style.transition = `opacity ${animationDuration}ms ease, transform ${animationDuration}ms ease`;
-                        card.style.opacity = '1';
-                        card.style.transform = 'translateX(0)';
-                    }, visibleCardIndex * delayBetweenCards);
+                    visibleCards.push(card);
+                    showCard(card, visibleCardIndex);
                     visibleCardIndex++;
                 }
             });
-
-            // Show the "View All" button based on the number of visible cards
-            if (visibleCardIndex > 12) {
-                button.style.display = 'block';
-                button.textContent = 'View Less';
+    
+            updateToggleButton();
+        }
+        
+        // Animation that goes through every card
+        function showCard(card, index) {
+            card.style.display = 'block';
+            setTimeout(() => {
+                card.style.transition = `opacity ${animationDuration}ms ease, transform ${animationDuration}ms ease`;
+                card.style.opacity = '1';
+                card.style.transform = 'translateX(0)';
+            }, index * delayBetweenCards);
+        }
+        
+        // Logic for the View button
+        function updateToggleButton() {
+            if (visibleCards.length > 12) {
+                toggleButton.style.display = 'block';
+                toggleButton.textContent = 'View Less';
             } else {
-                button.style.display = 'none';
+                toggleButton.style.display = 'none';
             }
         }
+            
+        toggleButton.addEventListener('click', function() {
+            if (this.textContent === 'View Less') {
+                visibleCards.forEach((card, index) => {
+                    if (index >= 12) {
+                        card.style.display = 'none';
+                    }
+                });
+                this.textContent = `View All ${visibleCards.length} Animals`;
+            } else {
+                visibleCards.forEach((card, index) => showCard(card, index));
+                this.textContent = 'View Less';
+            }
+        });
+    
+        // Initial filter
+        filterAnimals('all');
     });
 </script>
 {% endblock %}
