@@ -1,5 +1,6 @@
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 
 from Store.forms import RegistrationForm
@@ -21,7 +22,8 @@ def display_index(request):
     categories = Category.objects.filter(parent__isnull=True).prefetch_related('category_set')
     cart = user_profile.cart
     return render(request, 'index.html',
-                  {'animals': animals, 'animal_count': animal_count, 'cart_items': cart_items, 'cart': cart, 'categories': categories})
+                  {'animals': animals, 'animal_count': animal_count, 'cart_items': cart_items, 'cart': cart,
+                   'categories': categories})
 
 
 def display_about(request):
@@ -131,3 +133,10 @@ def add_to_cart(request, animal_id):
         cart.total_price += animal.price * quantity
         cart.save()
     return redirect('Store:index')
+
+
+def search_animals(request):
+    query = request.GET.get('query', '')
+    animals = Animal.objects.filter(common_name__icontains=query)[:5]
+    data = [{'id': animal.id, 'name': animal.common_name} for animal in animals]
+    return JsonResponse(data, safe=False)
