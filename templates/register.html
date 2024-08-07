@@ -1,67 +1,11 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register - Exotic Pet Shop</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            color: #ffffff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #1a2030;
-        }
-        .register-container {
-            background-color: #2a3040;
-            padding: 2rem;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(255, 215, 0, 0.1);
-            width: 300px;
-        }
-        h1 {
-            color: #ffd700;
-            text-align: center;
-            margin-bottom: 1.5rem;
-        }
-        form {
-            display: flex;
-            flex-direction: column;
-        }
-        input {
-            padding: 10px;
-            margin-bottom: 1rem;
-            border: 1px solid #ffd700;
-            background-color: #1a2030;
-            color: #ffffff;
-        }
-        button {
-            background-color: #ffd700;
-            color: #1a2030;
-            padding: 10px;
-            border: none;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        button:hover {
-            background-color: #e6c200;
-        }
-        .links {
-            text-align: center;
-            margin-top: 1rem;
-        }
-        .links a {
-            color: #ffd700;
-            text-decoration: none;
-        }
-        .links a:hover {
-            text-decoration: underline;
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/register.css' %}">
 </head>
 <body>
     <div class="register-container">

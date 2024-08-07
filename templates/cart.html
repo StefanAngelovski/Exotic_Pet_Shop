@@ -1,60 +1,14 @@
 {% extends 'layout.html' %}
+{% load static %}
 {% block title %}Cart - Exotic Pet Shop{% endblock %}
 {% block content %}
-<style>
-    .checkout-container {
-        display: flex;
-        justify-content: space-between;
-    }
-
-    .checkout-form, .order-summary {
-        width: 48%;
-    }
-
-    input, select {
-        width: 100%;
-        padding: 10px;
-        margin-bottom: 10px;
-        background-color: #2a3040;
-        border: 1px solid #ffd700;
-        color: #ffffff;
-    }
-
-    button {
-        background-color: #ffd700;
-        color: #1a2030;
-        padding: 10px 20px;
-        border: none;
-        cursor: pointer;
-        width: 100%;
-    }
-
-    button:hover {
-        background-color: #e6c200;
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-
-    th, td {
-        border: 1px solid #ffd700;
-        padding: 10px;
-        text-align: left;
-    }
-
-    th {
-        background-color: #2a3040;
-    }
-</style>
+<link rel="stylesheet" type="text/css" href="{% static '/css/cart.css' %}">
 <div class="container py-5">
     <h1 class="mb-8 display-4 font-weight-bold pb-5">Checkout</h1>
-
     <div class="checkout-container">
         <div class="checkout-form">
-<h2 class="pb-4">Shipping Information</h2>
-        <form id="checkout-form">
+        <h2 class="pb-4">Shipping Information</h2>
+            <form id="checkout-form">
                 <input type="text" name="name" placeholder="Full Name" value="{{ user_profile.shipping_name }}" readonly>
                 <input type="email" name="email" placeholder="Email Address" value="{{ request.user.email }}" readonly>
                 <input type="text" name="address" placeholder="Street Address" value="{{ user_profile.shipping_address }}" readonly>
@@ -71,7 +25,6 @@
                 <button type="submit">Place Order</button>
             </form>
         </div>
-
         <div class="order-summary">
             <h2 class="pb-4">Order Summary</h2>
             <table>

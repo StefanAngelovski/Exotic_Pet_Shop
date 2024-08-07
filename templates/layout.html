@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,76 +13,10 @@
 
     <!-- Font Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+
+    <link rel="stylesheet" type="text/css" href="{% static 'css/layout.css' %}">
 </head>
-<style>
-    .hover-text-orange:hover {
-        color: #fd7e14 !important;
-    }
-
-
-     input[type="text"], input[type="email"], input[type="tel"], textarea, select {
-        width: 100%;
-        padding: 10px;
-        margin-bottom: 10px;
-        background-color: #2a3040;
-        border: 1px solid #ffd700;
-        color: #ffffff;
-    }
-
-     .search-container {
-    position: relative;
-    display: inline-block;
-}
-
-    .search-bar {
-        position: absolute;
-        right: 100%; /* Changed from 120% */
-        width: 0;
-        top: -5px; /* Adjusted from -10% for better alignment */
-        border: none;
-        background-color: #2a3040;
-        color: #ffffff;
-        transition: all 0.3s ease-in-out;
-        outline: none;
-        opacity: 0;
-        visibility: hidden;
-        border-radius: 10px;
-        height: 30px;
-    }
-
-    .search-bar.active {
-        width: 300px;
-        padding: 0.5rem;
-        opacity: 1;
-        visibility: visible;
-    }
-
-    .search-suggestions {
-        position: absolute;
-        top: 100%;
-        left: auto;
-        right: 120%;
-        width: 280px;
-        background-color: #2a3040;
-        border: 1px solid white;
-        border-top: none;
-        max-height: 200px;
-        overflow-y: auto;
-        display: none;
-        z-index: 1000;
-        border-radius: 0 0 10px 10px; /* Round the bottom corners */
-    }
-
-    .suggestion-item {
-        padding: 10px;
-        cursor: pointer;
-        color: #ffffff;
-    }
-
-    .suggestion-item:hover {
-        background-color: #3a4050;
-    }
-</style>
 <body class="text-white d-flex flex-column" style="background-color: rgb(31, 41, 55);">
     <header class="py-4" style="background-color: rgb(17, 24, 39)">
         <div class="container d-flex justify-content-between align-items-center">

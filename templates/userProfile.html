@@ -1,46 +1,8 @@
 {% extends 'layout.html' %}
+{% load static %}
 {% block title %}User Profile - Exotic Pet Shop{% endblock %}
 {% block content %}
-<style>
-    .profile-container {
-        display: flex;
-        justify-content: space-between;
-        flex-wrap: wrap;
-    }
-
-    .profile-section {
-        width: 48%;
-        margin-bottom: 20px;
-    }
-
-    button {
-        background-color: #ffd700;
-        color: #1a2030;
-        padding: 10px 20px;
-        border: none;
-        cursor: pointer;
-    }
-
-    button:hover {
-        background-color: #e6c200;
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
-    }
-
-    th, td {
-        border: 1px solid #ffd700;
-        padding: 10px;
-        text-align: left;
-    }
-
-    th {
-        background-color: #2a3040;
-    }
-</style>
+<link rel="stylesheet" type="text/css" href="{% static 'css/userProfile.css' %}">
 {% if messages %}
     {% for message in messages %}
         <script>

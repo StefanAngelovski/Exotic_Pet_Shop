@@ -12,15 +12,17 @@ from django.contrib import messages
 def display_index(request):
     animals = Animal.objects.all()
     animal_count = animals.count()
-    user_profile = UserProfile.objects.get(user=request.user)
-    cart_items = user_profile.cart.cart_items.all()
 
-    for cart_item in cart_items:
-        cart_item.total_price = cart_item.animal.price * cart_item.quantity
+    if request.user.is_authenticated:
+        cart, created = Cart.objects.get_or_create(user=request.user)
+        cart_items = cart.items.all()
+    else:
+        cart = None
+        cart_items = []
 
     # Query for top-level categories (those without parents)
     categories = Category.objects.filter(parent__isnull=True).prefetch_related('category_set')
-    cart = user_profile.cart
+
     return render(request, 'index.html',
                   {'animals': animals, 'animal_count': animal_count, 'cart_items': cart_items, 'cart': cart,
                    'categories': categories})
@@ -34,12 +36,11 @@ def display_contact(request):
     return render(request, 'contact.html')
 
 
+@login_required
 def display_cart(request):
-    user = request.user
-    user_profile = UserProfile.objects.get(user=user)  # Fetch the UserProfile for the current user
-    cart = Cart.objects.get(user=user)  # Fetch the cart for the current user
-    cart_items = cart.cart_items.all()  # Fetch all items in the cart
-    return render(request, 'cart.html', {'cart_items': cart_items, 'cart': cart, 'user_profile': user_profile})
+    cart, created = Cart.objects.get_or_create(user=request.user)
+    cart_items = cart.items.all()  # Use the related_name 'items' we set in the CartItem model
+    return render(request, 'cart.html', {'cart_items': cart_items, 'cart': cart})
 
 
 def display_userProfile(request):
@@ -54,6 +55,8 @@ def display_register(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
+            # Create a cart
+            Cart.objects.get_or_create(user=user)
             messages.success(request, 'Account created successfully')
             return redirect('Store:userProfile')
     else:
@@ -119,20 +122,39 @@ def display_animal(request, animal_id):
     return render(request, 'animalInformation.html', {'animal': animal})
 
 
+@login_required
 def add_to_cart(request, animal_id):
     animal = get_object_or_404(Animal, id=animal_id)
-    cart = request.user.userprofile.cart
+    cart, created = Cart.objects.get_or_create(user=request.user)
+
     if request.method == 'POST':
         quantity = int(request.POST.get('quantity'))
         age = request.POST.get('age')
         sex = request.POST.get('sex')
-        cart_item = CartItem(animal=animal, quantity=quantity, age=age, sex=sex)
-        cart_item.save()
-        cart.cart_items.add(cart_item)
+
+        # Check if the item is already in the cart
+        existing_item = cart.items.filter(animal=animal, age=age, sex=sex).first()
+
+        if existing_item:
+            # Update existing item
+            existing_item.quantity += quantity
+            existing_item.save()
+        else:
+            # Create new cart item
+            cart_item = CartItem.objects.create(
+                cart=cart,
+                animal=animal,
+                quantity=quantity,
+                age=age,
+                sex=sex
+            )
+
         # Update the total price of the cart
-        cart.total_price += animal.price * quantity
+        cart.total_price = sum(item.animal.price * item.quantity for item in cart.items.all())
         cart.save()
+
     return redirect('Store:index')
+    #TODO add sex to selection
 
 
 def search_animals(request):

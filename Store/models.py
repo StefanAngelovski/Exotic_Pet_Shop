@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models import OneToOneField
 from ckeditor.fields import RichTextField
+from django_ckeditor_5.fields import CKEditor5Field
 
 
 # Create your models here.
@@ -18,7 +19,7 @@ class Animal(models.Model):
     scientific_name = models.CharField(max_length=200, null=True, blank=True)
     image = models.ImageField(upload_to='animals/', null=True, blank=True)
     price = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
-    description = RichTextField(null=True, blank=True)
+    description = CKEditor5Field('Description', null=True, blank=True)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
@@ -28,7 +29,6 @@ class Animal(models.Model):
 class Cart(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, default=None)
     total_price = models.DecimalField(max_digits=6, decimal_places=2, default=0)
-    cart_items = models.ManyToManyField('CartItem')
 
     def __str__(self):
         return self.user.username + "'s cart"
@@ -39,13 +39,18 @@ class CartItem(models.Model):
         ('M', 'Male'),
         ('F', 'Female'),
     ]
-    age = models.PositiveIntegerField(null=True, blank=True)
-    sex = models.CharField(max_length=1, choices=SEX_CHOICES, null=True, blank=True)
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='items', null=True)
     animal = models.ForeignKey(Animal, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
+    age = models.PositiveIntegerField(null=True, blank=True)
+    sex = models.CharField(max_length=1, choices=SEX_CHOICES, null=True, blank=True)
 
     def __str__(self):
         return self.animal.common_name
+
+    @property
+    def total_price(self):
+        return self.animal.price * self.quantity
 
 
 class UserProfile(models.Model):
