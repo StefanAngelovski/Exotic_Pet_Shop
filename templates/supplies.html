@@ -1,0 +1,172 @@
+{% extends 'layout.html' %}
+{% block title %}Exotic Pet Shop - Supplies{% endblock %}
+{% load static %}
+
+{% block content %}
+<style>
+    body {
+        background-color: #1c2331;
+        color: #ffffff;
+    }
+    .navbar {
+        background-color: #0f1620;
+    }
+    .card {
+        background-color: #2c3e50;
+        border: none;
+        margin-bottom: 20px;
+    }
+    .btn-primary {
+        background-color: #e67e22;
+        border-color: #e67e22;
+    }
+    .btn-primary:hover {
+        background-color: #d35400;
+        border-color: #d35400;
+    }
+    .category-button {
+        background-color: #34495e;
+        color: #ffffff;
+        border: none;
+        padding: 10px 20px;
+        margin-bottom: 10px;
+        width: 100%;
+        text-align: left;
+        cursor: pointer;
+    }
+    .category-button:hover {
+        background-color: #2c3e50;
+    }
+    .category-content {
+        display: none;
+        padding: 10px;
+        background-color: #2c3e50;
+    }
+    .featured-products, .why-choose-us {
+        background-color: #34495e;
+        padding: 20px;
+        margin-top: 20px;
+    }
+</style>
+
+<div class="container my-5">
+    <h1 class="mb-5 display-4 font-weight-bold">Exotic Pet Supplies</h1>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <button class="category-button" onclick="toggleCategory('habitat')">
+                <i class="fas fa-home me-2"></i> Habitat Essentials
+            </button>
+            <div id="habitat" class="category-content">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <img src="/api/placeholder/400/300" class="card-img-top" alt="Terrariums">
+                            <div class="card-body">
+                                <h5 class="card-title">Terrariums</h5>
+                                <p class="card-text">Provide the perfect home for your exotic pet.</p>
+                                <a href="#" class="btn btn-primary">Shop Terrariums</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <img src="/api/placeholder/400/300" class="card-img-top" alt="Lighting">
+                            <div class="card-body">
+                                <h5 class="card-title">Lighting Systems</h5>
+                                <p class="card-text">Ensure proper lighting for your pet's habitat.</p>
+                                <a href="#" class="btn btn-primary">Shop Lighting</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="category-button" onclick="toggleCategory('nutrition')">
+                <i class="fas fa-utensils me-2"></i> Nutrition & Feeders
+            </button>
+            <div id="nutrition" class="category-content">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <img src="/api/placeholder/400/300" class="card-img-top" alt="Dubia Roaches">
+                            <div class="card-body">
+                                <h5 class="card-title">Dubia Roaches</h5>
+                                <p class="card-text">High-quality feeder insects for your exotic pets.</p>
+                                <a href="#" class="btn btn-primary">Shop Feeders</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <img src="/api/placeholder/400/300" class="card-img-top" alt="Reptile Food">
+                            <div class="card-body">
+                                <h5 class="card-title">Reptile Food</h5>
+                                <p class="card-text">Specialized nutrition for various reptile species.</p>
+                                <a href="#" class="btn btn-primary">Shop Reptile Food</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="category-button" onclick="toggleCategory('wellness')">
+                <i class="fas fa-medkit me-2"></i> Health & Wellness
+            </button>
+            <div id="wellness" class="category-content">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <img src="/api/placeholder/400/300" class="card-img-top" alt="Supplements">
+                            <div class="card-body">
+                                <h5 class="card-title">Supplements</h5>
+                                <p class="card-text">Keep your exotic pet healthy and thriving.</p>
+                                <a href="#" class="btn btn-primary">Shop Supplements</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <img src="/api/placeholder/400/300" class="card-img-top" alt="First Aid Kits">
+                            <div class="card-body">
+                                <h5 class="card-title">First Aid Kits</h5>
+                                <p class="card-text">Be prepared for any emergency.</p>
+                                <a href="#" class="btn btn-primary">Shop First Aid</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="featured-products">
+                <h2>Featured Products</h2>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item bg-transparent text-white">UVB Lighting Kits</li>
+                    <li class="list-group-item bg-transparent text-white">Reptile Misting Systems</li>
+                    <li class="list-group-item bg-transparent text-white">Premium Dubia Roach Colonies</li>
+                    <li class="list-group-item bg-transparent text-white">Exotic Pet Vitamin Supplements</li>
+                </ul>
+            </div>
+
+            <div class="why-choose-us mt-4">
+                <h2>Why Choose Our Supplies</h2>
+                <p>At Exotic Pet Shop, we carefully curate our selection of supplies to ensure the health, happiness, and longevity of your unique companions. Our products are sourced from trusted manufacturers and undergo rigorous quality checks.</p>
+                <a href="#" class="btn btn-primary">Learn More</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function toggleCategory(categoryId) {
+    var content = document.getElementById(categoryId);
+    if (content.style.display === "block") {
+        content.style.display = "none";
+    } else {
+        content.style.display = "block";
+    }
+}
+</script>
+{% endblock %}

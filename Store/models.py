@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models import OneToOneField
-from ckeditor.fields import RichTextField
 from django_ckeditor_5.fields import CKEditor5Field
 
 
@@ -26,6 +25,25 @@ class Animal(models.Model):
         return self.common_name
 
 
+class SupplyCategory(models.Model):
+    name = models.CharField(max_length=200)
+    icon = models.ImageField(upload_to='supply_categories/', null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
+
+class Supplies(models.Model):
+    name = models.CharField(max_length=200)
+    description = models.TextField(null=True, blank=True)
+    price = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
+    image = models.ImageField(upload_to='supplies/', null=True, blank=True)
+    supply_category = models.ForeignKey(SupplyCategory, on_delete=models.SET_NULL, null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
+
 class Cart(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, default=None)
     total_price = models.DecimalField(max_digits=6, decimal_places=2, default=0)
@@ -40,17 +58,18 @@ class CartItem(models.Model):
         ('F', 'Female'),
     ]
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='items', null=True)
-    animal = models.ForeignKey(Animal, on_delete=models.CASCADE)
+    animal = models.ForeignKey(Animal, on_delete=models.CASCADE, null=True, blank=True)
+    supply = models.ForeignKey(Supplies, on_delete=models.CASCADE, null=True, blank=True)
     quantity = models.PositiveIntegerField(default=1)
     age = models.PositiveIntegerField(null=True, blank=True)
     sex = models.CharField(max_length=1, choices=SEX_CHOICES, null=True, blank=True)
 
     def __str__(self):
-        return self.animal.common_name
+        return self.animal.common_name if self.animal else self.supply.name
 
     @property
     def total_price(self):
-        return self.animal.price * self.quantity
+        return self.animal.price * self.quantity if self.animal else self.supply.price * self.quantity
 
 
 class UserProfile(models.Model):

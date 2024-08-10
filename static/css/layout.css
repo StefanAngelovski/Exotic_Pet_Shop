@@ -1,75 +1,143 @@
-    .hover-text-orange:hover {
-        color: #fd7e14 !important;
+.hover-text-orange:hover {
+    color: #fd7e14 !important;
+}
+
+
+input[type="text"], input[type="email"], input[type="tel"], textarea, select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #2a3040;
+    border: 1px solid #ffd700;
+    color: #ffffff;
+}
+
+.search-container {
+    position: relative;
+    display: inline-block;
+}
+
+.search-bar {
+    position: absolute;
+    right: 100%;
+    width: 0;
+    top: -5px;
+    border: none;
+    background-color: #2a3040;
+    color: #ffffff;
+    transition: all 0.3s ease-in-out;
+    outline: none;
+    opacity: 0;
+    visibility: hidden;
+    border-radius: 10px;
+    height: 30px;
+}
+
+.search-bar.active {
+    width: 300px;
+    padding: 0.5rem;
+    opacity: 1;
+    visibility: visible;
+}
+
+.search-suggestions {
+    position: absolute;
+    top: 100%;
+    left: auto;
+    right: 120%;
+    width: 280px;
+    background-color: #2a3040;
+    border: 1px solid white;
+    border-top: none;
+    max-height: 200px;
+    overflow-y: auto;
+    display: none;
+    z-index: 1000;
+    border-radius: 0 0 10px 10px;
+}
+
+.suggestion-item {
+    padding: 10px;
+    cursor: pointer;
+    color: #ffffff;
+}
+
+.suggestion-item:hover {
+    background-color: #3a4050;
+}
+
+.nav-link {
+    transition: transform 0.5s ease;
+}
+
+.nav-link:hover {
+    transform: translateY(2px);
+}
+
+
+
+
+.navbar-toggler {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+}
+
+.navbar-toggler-icon {
+    display: inline-block;
+    width: 1.5em;
+    height: 1.5em;
+    vertical-align: middle;
+    content: "";
+    background-size: 100% 100%;
+    background: url("data:image/svg+xml,<svg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'><path stroke='rgba(255, 255, 255, 0.85)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/></svg>") no-repeat center center;
+}
+
+.navbar-toggler:hover, .navbar-toggler:focus, .navbar-toggler:active {
+    outline: none;
+    background: none !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.navbar-collapse {
+    display: block;
+}
+@media (max-width: 768px) {
+    .navbar-toggler {
+        display: block;
     }
 
-
-    input[type="text"], input[type="email"], input[type="tel"], textarea, select {
+    .navbar-collapse {
+        display: block;
         width: 100%;
-        padding: 10px;
-        margin-bottom: 10px;
-        background-color: #2a3040;
-        border: 1px solid #ffd700;
-        color: #ffffff;
-    }
-
-    .search-container {
-        position: relative;
-        display: inline-block;
-    }
-
-    .search-bar {
-        position: absolute;
-        right: 100%;
-        width: 0;
-        top: -5px;
-        border: none;
-        background-color: #2a3040;
-        color: #ffffff;
-        transition: all 0.3s ease-in-out;
-        outline: none;
-        opacity: 0;
-        visibility: hidden;
-        border-radius: 10px;
-        height: 30px;
-    }
-
-    .search-bar.active {
-        width: 300px;
-        padding: 0.5rem;
-        opacity: 1;
-        visibility: visible;
-    }
-
-    .search-suggestions {
         position: absolute;
         top: 100%;
-        left: auto;
-        right: 120%;
-        width: 280px;
-        background-color: #2a3040;
-        border: 1px solid white;
-        border-top: none;
-        max-height: 200px;
-        overflow-y: auto;
-        display: none;
-        z-index: 1000;
-        border-radius: 0 0 10px 10px;
+        left: 0;
+        background-color: rgb(45, 55, 72);
+        overflow: hidden;
+        transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+        max-height: 0;
+        opacity: 0;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        z-index: 50;
     }
 
-    .suggestion-item {
-        padding: 10px;
-        cursor: pointer;
-        color: #ffffff;
+    .navbar-collapse.show {
+        max-height: 350px;
+        opacity: 1;
     }
 
-    .suggestion-item:hover {
-        background-color: #3a4050;
+    .nav {
+        flex-direction: column;
+        align-items: start;
+        padding: 10px 0;
     }
 
-    .nav-link {
-        transition: transform 0.5s ease;
+    .nav-item {
+        width: 100%;
+        padding: 10px 15px;
     }
-
-    .nav-link:hover {
-        transform: translateY(2px);
-    }
+}

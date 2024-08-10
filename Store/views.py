@@ -154,7 +154,7 @@ def add_to_cart(request, animal_id):
         cart.save()
 
     return redirect('Store:index')
-    #TODO add sex to selection
+    # TODO add sex to selection
 
 
 def search_animals(request):
@@ -162,3 +162,7 @@ def search_animals(request):
     animals = Animal.objects.filter(common_name__icontains=query)[:5]
     data = [{'id': animal.id, 'name': animal.common_name} for animal in animals]
     return JsonResponse(data, safe=False)
+
+
+def display_supplies(request):
+    return render(request, 'supplies.html')

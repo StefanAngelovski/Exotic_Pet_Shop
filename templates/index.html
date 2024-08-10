@@ -4,8 +4,33 @@
 {% block content %}
 <link rel="stylesheet" type="text/css" href="{% static '/css/index.css' %}">
 <main class="flex-grow container my-4">
-    <!-- Left Sidebar (Categories) -->
-    <div class="sidebar sidebar-left">
+
+    <!-- Categories Section for Mobile -->
+    <div class="categories-mobile d-md-none">
+        <h3>Categories</h3>
+        <ul>
+            <li>
+                <a href="#" class="parent-category active" data-category-id="all">All Animals</a>
+            </li>
+            {% for category in categories %}
+            <li>
+                <a href="#" class="parent-category" data-category-id="{{ category.id }}">{{ category.name }}</a>
+                {% if category.category_set.all %}
+                <ul class="child-categories" id="children-{{ category.id }}">
+                    {% for subcategory in category.category_set.all %}
+                    <li class="child-category">
+                        <a href="#" data-category-id="{{ subcategory.id }}" data-parent-id="{{ category.id }}">{{ subcategory.name }}</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- Categories Sidebar for Desktop -->
+    <div class="sidebar sidebar-left d-none d-md-block">
         <h3>Categories</h3>
         <ul>
             <li>
@@ -86,7 +111,7 @@
     </div>
 
     <!-- Right Sidebar (Cart) -->
-    <div class="sidebar sidebar-right">
+    <div class="sidebar sidebar-right d-none d-md-block">
         <h3>Your Cart</h3>
         <div id="cart-items">
             {% for cart_item in cart_items %}
@@ -148,171 +173,44 @@
         </div>
     </section>
 </main>
-    
 
 <script>
     // Collapsible categories
     document.addEventListener('DOMContentLoaded', function() {
         var parentCategories = document.querySelectorAll('.parent-category');
-    
+
         parentCategories.forEach(function(parent) {
             parent.addEventListener('click', function(event) {
                 event.preventDefault();
-    
+
                 // Toggle the 'open' class on the clicked parent
                 this.classList.toggle('open');
-    
+
                 var categoryId = this.getAttribute('data-category-id');
                 var childCategories = document.getElementById('children-' + categoryId);
-    
+
                 if (childCategories) {
                     childCategories.classList.toggle('show');
                 }
             });
         });
-    });
-</script>
 
-<script>
-    // Get all "Add to Cart" buttons
-    var addToCartButtons = document.querySelectorAll('[data-bs-toggle="modal"][data-bs-target="#addToCartModal"]');
-
-    // Add click event listener to each button
-    addToCartButtons.forEach(function(button) {
-        button.addEventListener('click', function(event) {
-            // Prevent default behavior
-            event.preventDefault();
-
-            // Extract animal ID from data-* attributes
-            var animalId = button.getAttribute('data-animal-id');
-
-            // Update the form action
-            var form = document.getElementById('addToCartForm');
-            form.action = "{% url 'Store:add_to_cart' animal_id=999999 %}".replace('999999', animalId);
-
-            // Show the modal
-            var modal = new bootstrap.Modal(document.getElementById('addToCartModal'));
-            modal.show();
-        });
-    });
-</script>
-
-<script>
-    //3D Tilt effect on cards hover
-    document.addEventListener('DOMContentLoaded', function() {
-        const cards = document.querySelectorAll('.category-card .card');
-
-        cards.forEach(card => {
-            card.addEventListener('mousemove', handleMouseMove);
-            card.addEventListener('mouseleave', handleMouseLeave);
-        });
-
-        function handleMouseMove(e) {
-            const card = this;
-            const cardRect = card.getBoundingClientRect();
-            const cardCenterX = cardRect.left + cardRect.width / 2;
-            const cardCenterY = cardRect.top + cardRect.height / 2;
-            const mouseX = e.clientX - cardCenterX;
-            const mouseY = e.clientY - cardCenterY;
-            const rotateY = (mouseX / cardRect.width) * 20;
-            const rotateX = -(mouseY / cardRect.height) * 20;
-
-            card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.05)`;
-        }
-
-        function handleMouseLeave(e) {
-            this.style.transform = 'rotateX(0) rotateY(0) scale(1)';
-        }
-    });
-</script>
-
-<script>
-    // Filter animals by category
-    document.addEventListener('DOMContentLoaded', function() {
-        const categoryLinks = document.querySelectorAll('.sidebar-left a');
+        // Display "View All" Button
+        const viewAllButton = document.getElementById('toggle-button');
         const animalCards = document.querySelectorAll('.category-card');
-        const toggleButton = document.getElementById('toggle-button');
-    
-        const animationDuration = 400; // in milliseconds
-        const delayBetweenCards = 20; // in milliseconds
-    
-        let currentCategory = 'all';
-        let visibleCards = [];
-    
-        categoryLinks.forEach(link => {
-            link.addEventListener('click', function(e) {
-                e.preventDefault();
-                const categoryId = this.getAttribute('data-category-id');
-                const parentId = this.getAttribute('data-parent-id');
-    
-                categoryLinks.forEach(l => l.classList.remove('active'));
-                this.classList.add('active');
-    
-                currentCategory = categoryId;
-                filterAnimals(categoryId, parentId);
-            });
-        });
-    
-        function filterAnimals(categoryId, parentId) {
-            visibleCards = [];
-            let visibleCardIndex = 0;
-    
-            animalCards.forEach((card) => {
-                const cardCategory = card.getAttribute('data-category');
-                const cardParentCategory = card.getAttribute('data-parent-category');
-    
-                card.style.opacity = '0';
-                card.style.transform = 'translateX(-20px)';
-                card.style.display = 'none';
-    
-                if (categoryId === 'all' ||
-                    cardCategory === categoryId ||
-                    cardParentCategory === categoryId) {
-                    visibleCards.push(card);
-                    showCard(card, visibleCardIndex);
-                    visibleCardIndex++;
-                }
-            });
-    
-            updateToggleButton();
-        }
-        
-        // Animation that goes through every card
-        function showCard(card, index) {
-            card.style.display = 'block';
-            setTimeout(() => {
-                card.style.transition = `opacity ${animationDuration}ms ease, transform ${animationDuration}ms ease`;
-                card.style.opacity = '1';
-                card.style.transform = 'translateX(0)';
-            }, index * delayBetweenCards);
-        }
-        
-        // Logic for the View button
-        function updateToggleButton() {
-            if (visibleCards.length > 12) {
-                toggleButton.style.display = 'block';
-                toggleButton.textContent = 'View Less';
+        let visible = false;
+
+        viewAllButton.addEventListener('click', function() {
+            if (visible) {
+                animalCards.forEach(card => card.style.display = 'none');
+                visible = false;
+                viewAllButton.textContent = 'View All {{ animal_count }} Animals';
             } else {
-                toggleButton.style.display = 'none';
-            }
-        }
-            
-        toggleButton.addEventListener('click', function() {
-            if (this.textContent === 'View Less') {
-                visibleCards.forEach((card, index) => {
-                    if (index >= 12) {
-                        card.style.display = 'none';
-                    }
-                });
-                this.textContent = `View All ${visibleCards.length} Animals`;
-            } else {
-                visibleCards.forEach((card, index) => showCard(card, index));
-                this.textContent = 'View Less';
+                animalCards.forEach(card => card.style.display = 'block');
+                visible = true;
+                viewAllButton.textContent = 'Hide Animals';
             }
         });
-    
-        // Initial filter
-        filterAnimals('all');
     });
 </script>
 {% endblock %}
