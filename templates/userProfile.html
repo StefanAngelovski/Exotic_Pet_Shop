@@ -77,7 +77,18 @@
                     </tr>
                 </thead>
                 <tbody id="order-history">
-                    <!-- Order history will be populated dynamically -->
+                    {% for order in orders %}
+                        <tr>
+                            <td>{{ order.id }}</td>
+                            <td>{{ order.date_ordered }}</td>
+                            <td>{{ order.transaction_price }}$</td>
+                            <td>{{ order.complete }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="4">No orders found.</td>
+                        </tr>
+                    {% endfor %}
                 </tbody>
             </table>
         </div>

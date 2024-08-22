@@ -1,7 +1,10 @@
+from decimal import Decimal
+
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
+from django.views.decorators.http import require_POST
 
 from Store.forms import RegistrationForm
 from Store.models import *
@@ -38,15 +41,18 @@ def display_contact(request):
 
 @login_required
 def display_cart(request):
+    user = request.user
+    user_profile, created = UserProfile.objects.get_or_create(user=user)
     cart, created = Cart.objects.get_or_create(user=request.user)
     cart_items = cart.items.all()  # Use the related_name 'items' we set in the CartItem model
-    return render(request, 'cart.html', {'cart_items': cart_items, 'cart': cart})
+    return render(request, 'cart.html', {'cart_items': cart_items, 'cart': cart, "user_profile": user_profile})
 
 
 def display_userProfile(request):
     user = request.user
     user_profile, created = UserProfile.objects.get_or_create(user=user)
-    return render(request, 'userProfile.html', {'user': user, 'user_profile': user_profile})
+    orders = Order.objects.filter(user=request.user)
+    return render(request, 'userProfile.html', {'user': user, 'user_profile': user_profile, 'orders': orders})
 
 
 def display_register(request):
@@ -122,41 +128,6 @@ def display_animal(request, animal_id):
     return render(request, 'animalInformation.html', {'animal': animal})
 
 
-@login_required
-def add_to_cart(request, animal_id):
-    animal = get_object_or_404(Animal, id=animal_id)
-    cart, created = Cart.objects.get_or_create(user=request.user)
-
-    if request.method == 'POST':
-        quantity = int(request.POST.get('quantity'))
-        age = request.POST.get('age')
-        sex = request.POST.get('sex')
-
-        # Check if the item is already in the cart
-        existing_item = cart.items.filter(animal=animal, age=age, sex=sex).first()
-
-        if existing_item:
-            # Update existing item
-            existing_item.quantity += quantity
-            existing_item.save()
-        else:
-            # Create new cart item
-            cart_item = CartItem.objects.create(
-                cart=cart,
-                animal=animal,
-                quantity=quantity,
-                age=age,
-                sex=sex
-            )
-
-        # Update the total price of the cart
-        cart.total_price = sum(item.animal.price * item.quantity for item in cart.items.all())
-        cart.save()
-
-    return redirect('Store:index')
-    # TODO add sex to selection
-
-
 def search_animals(request):
     query = request.GET.get('query', '')
     animals = Animal.objects.filter(common_name__icontains=query)[:5]
@@ -165,4 +136,125 @@ def search_animals(request):
 
 
 def display_supplies(request):
-    return render(request, 'supplies.html')
+    categories = SupplyCategory.objects.all()
+    supplies = Supplies.objects.all()
+    return render(request, 'supplies.html', {'categories': categories, 'supplies': supplies})
+
+
+@login_required
+@require_POST
+def update_cart_item(request, cart_item_id):
+    cart_item = get_object_or_404(CartItem, id=cart_item_id, cart__user=request.user)
+    quantity = int(request.POST.get('quantity', cart_item.quantity))
+    age = request.POST.get('age', cart_item.age)
+    sex = request.POST.get('sex', cart_item.sex)
+
+    cart_item.quantity = quantity
+    cart_item.age = age
+    cart_item.sex = sex
+    cart_item.save()
+
+    cart_item.cart.total_price = sum(item.total_price for item in cart_item.cart.items.all())
+    cart_item.cart.save()
+
+    return JsonResponse({
+        'success': True,
+        'cart_total': cart_item.cart.total_price,
+        'item_total': cart_item.total_price,
+    })
+
+
+@login_required
+@require_POST
+def delete_cart_item(request, cart_item_id):
+    cart_item = get_object_or_404(CartItem, id=cart_item_id, cart__user=request.user)
+    cart_item.delete()
+
+    cart_item.cart.total_price = sum(item.total_price for item in cart_item.cart.items.all())
+    cart_item.cart.save()
+
+    return JsonResponse({
+        'success': True,
+        'cart_total': cart_item.cart.total_price,
+    })
+
+
+@login_required
+def add_supply_to_cart(request, supply_id):
+    supply = get_object_or_404(Supplies, id=supply_id)
+    quantity = int(request.POST.get('quantity', 1))
+
+    user_profile = get_object_or_404(UserProfile, user=request.user)
+    cart = user_profile.cart
+
+    # Check if the supply already exists in the cart
+    cart_item, created = CartItem.objects.get_or_create(
+        cart=cart,
+        supply=supply,
+        defaults={'quantity': quantity}
+    )
+
+    if not created:
+        # If it exists, update the quantity
+        cart_item.quantity += quantity
+        cart_item.save()
+
+    return redirect('Store:cart')
+
+
+@login_required
+@require_POST
+def add_animal_to_cart(request):
+    animal_id = request.GET.get('animal_id')
+    quantity = int(request.POST.get('quantity', 1))
+    age = request.POST.get('age')
+    sex = request.POST.get('sex')
+
+    animal = get_object_or_404(Animal, id=animal_id)
+    cart, created = Cart.objects.get_or_create(user=request.user)
+
+    cart_item, created = CartItem.objects.get_or_create(
+        cart=cart,
+        animal=animal,
+        defaults={'quantity': quantity, 'age': age, 'sex': sex}
+    )
+
+    if not created:
+        # Update quantity, age, sex if the item already exists
+        cart_item.quantity += quantity
+        cart_item.age = age
+        cart_item.sex = sex
+        cart_item.save()
+
+    cart.total_price = sum(item.total_price for item in cart.items.all())
+    cart.save()
+
+    return JsonResponse({'success': True, 'cart_total': cart.total_price})
+
+
+@login_required
+def place_order(request):
+    if request.method == 'POST':
+        user = request.user
+        cart = Cart.objects.get(user=user)
+
+        # Create a new order
+        order = Order.objects.create(
+            user=user,
+            complete=True,
+            transaction_price=str(cart.total_price)  # Convert Decimal to string
+        )
+
+        # Create a string to store order details
+        order_details = []
+        order.save()
+
+        # Clear the cart
+        cart.items.all().delete()
+        cart.total_price = Decimal('0.00')
+        cart.save()
+
+        messages.success(request, 'Your order has been placed successfully!')
+        return redirect('Store:userProfile')  # Redirect to user profile or order confirmation page
+
+    return redirect('Store:cart')  # Redirect back to cart if not a POST request

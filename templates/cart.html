@@ -8,20 +8,19 @@
     <div class="checkout-container">
         <div class="checkout-form">
         <h2 class="pb-4">Shipping Information</h2>
-            <form id="checkout-form">
+            <form id="checkout-form" method="POST" action="{% url 'Store:place_order' %}">
+                {% csrf_token %}
                 <input type="text" name="name" placeholder="Full Name" value="{{ user_profile.shipping_name }}" readonly>
                 <input type="email" name="email" placeholder="Email Address" value="{{ request.user.email }}" readonly>
                 <input type="text" name="address" placeholder="Street Address" value="{{ user_profile.shipping_address }}" readonly>
                 <input type="text" name="city" placeholder="City" value="{{ user_profile.shipping_city }}" readonly>
                 <input type="text" name="state" placeholder="State/Province" value="{{ user_profile.shipping_state }}" readonly>
                 <input type="text" name="zip" placeholder="ZIP/Postal Code" value="{{ user_profile.shipping_zip }}" readonly>
-
                 <h2 class="py-4">Payment Information</h2>
                 <input type="text" name="card-number" placeholder="Card Number" required>
                 <input type="text" name="card-name" placeholder="Name on Card" required>
                 <input type="text" name="expiry" placeholder="MM/YY" required>
                 <input type="text" name="cvv" placeholder="CVV" required>
-
                 <button type="submit">Place Order</button>
             </form>
         </div>
@@ -32,20 +31,31 @@
                     <tr>
                         <th>Item</th>
                         <th>Price</th>
+                        <th>Quantity</th>
                     </tr>
                 </thead>
                 <tbody id="order-items">
                     {% for cart_item in cart_items %}
+                        {% if cart_item.animal %}
                         <tr>
                             <td>{{ cart_item.animal.common_name }}</td>
-                            <td>{{ cart_item.animal.price }}</td>
+                            <td class="text-center">{{ cart_item.animal.price|floatformat:0 }}$</td>
+                            <td class="text-center">{{ cart_item.quantity }}</td>
                         </tr>
+                        {% endif %}
+                        {% if cart_item.supply %}
+                        <tr>
+                            <td>{{ cart_item.supply.name }}</td>
+                            <td class="text-center">{{ cart_item.supply.price|floatformat:0 }}$</td>
+                            <td class="text-center">{{ cart_item.quantity }}</td>
+                        </tr>
+                        {% endif %}
                     {% endfor %}
                 </tbody>
                 <tfoot>
                     <tr>
                         <td><strong>Total</strong></td>
-                        <td id="order-total"><strong>{{ cart.total_price }}</strong></td>
+                        <td colspan="2" class="text-center"><strong>{{ cart.total_price|floatformat:0 }}$</strong></td>
                     </tr>
                 </tfoot>
             </table>

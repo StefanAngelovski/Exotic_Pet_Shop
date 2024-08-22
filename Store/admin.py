@@ -19,3 +19,6 @@ class CartAdmin(admin.ModelAdmin):
 admin.site.register(Cart, CartAdmin)
 admin.site.register(CartItem)
 admin.site.register(UserProfile)
+admin.site.register(SupplyCategory)
+admin.site.register(Supplies)
+admin.site.register(Order)

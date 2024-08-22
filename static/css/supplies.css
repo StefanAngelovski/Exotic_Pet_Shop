@@ -1,0 +1,50 @@
+    body {
+        background-color: #1c2331;
+        color: #ffffff;
+    }
+
+    .navbar {
+        background-color: #0f1620;
+    }
+
+    .card {
+        background-color: #2c3e50;
+        border: none;
+        margin-bottom: 20px;
+    }
+
+    .btn-primary {
+        background-color: #e67e22;
+        border-color: #e67e22;
+    }
+
+    .btn-primary:hover {
+        background-color: #d35400;
+        border-color: #d35400;
+    }
+    .category-button {
+        background-color: #34495e;
+        color: #ffffff;
+        border: none;
+        padding: 10px 20px;
+        margin-bottom: 10px;
+        width: 100%;
+        text-align: left;
+        cursor: pointer;
+    }
+
+    .category-button:hover {
+        background-color: #2c3e50;
+    }
+
+    .category-content {
+        display: none;
+        padding: 10px;
+        background-color: #2c3e50;
+    }
+
+    .featured-products, .why-choose-us {
+        background-color: #34495e;
+        padding: 20px;
+        margin-top: 20px;
+    }
