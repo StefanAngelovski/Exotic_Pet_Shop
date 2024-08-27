@@ -22,9 +22,7 @@ def display_index(request):
         cart = None
         cart_items = []
 
-    # Query for top-level categories (those without parents)
-    categories = Category.objects.filter(parent__isnull=True).prefetch_related('category_set')
-
+    categories = Category.objects.all()  # Get all categories
     return render(request, 'index.html',
                   {'animals': animals, 'animal_count': animal_count, 'cart_items': cart_items, 'cart': cart,
                    'categories': categories})

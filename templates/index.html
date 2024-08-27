@@ -36,24 +36,11 @@
     <!-- Categories Sidebar for Desktop -->
     <div class="sidebar sidebar-left d-none d-md-block">
         <h3>Categories</h3>
-        <ul>
+        <ul id="category-tree">
             <li>
-                <a href="#" class="parent-category active" data-category-id="all">All Animals</a>
+                <a href="#" class="category-item active" data-category-id="all">All Animals</a>
             </li>
-            {% for category in categories %}
-            <li>
-                <a href="#" class="parent-category" data-category-id="{{ category.id }}">{{ category.name }}</a>
-                {% if category.category_set.all %}
-                <ul class="child-categories" id="children-{{ category.id }}">
-                    {% for subcategory in category.category_set.all %}
-                    <li class="child-category">
-                        <a href="#" data-category-id="{{ subcategory.id }}" data-parent-id="{{ category.id }}">{{ subcategory.name }}</a>
-                    </li>
-                    {% endfor %}
-                </ul>
-                {% endif %}
-            </li>
-            {% endfor %}
+            <!-- We'll populate this dynamically with JavaScript -->
         </ul>
     </div>
 
@@ -200,4 +187,71 @@
         </div>
     </section>
 </main>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const categories = [
+        {% for category in categories %}
+            {
+                id: {{ category.id }},
+                name: "{{ category.name }}",
+                parent: {{ category.parent.id|default:"null" }}
+            },
+        {% endfor %}
+    ];
+
+    function buildCategoryTree(categories, parentId = null, depth = 0) {
+        const children = categories.filter(category => category.parent === parentId);
+        if (children.length === 0) return '';
+
+        let html = `<ul class="subcategory" style="display: ${parentId === null ? 'block' : 'none'};">`;
+        for (const child of children) {
+            html += `
+                <li>
+                    <a href="#" class="category-item" data-category-id="${child.id}" style="padding-left: ${depth * 20}px;">${child.name}</a>
+                    ${buildCategoryTree(categories, child.id, depth + 1)}
+                </li>
+            `;
+        }
+        html += '</ul>';
+        return html;
+    }
+
+    const categoryTree = document.getElementById('category-tree');
+    categoryTree.innerHTML += buildCategoryTree(categories);
+
+    categoryTree.addEventListener('click', function(e) {
+        if (e.target.classList.contains('category-item')) {
+            e.preventDefault();
+            
+            // Remove 'active' class from all items
+            document.querySelectorAll('.category-item').forEach(item => item.classList.remove('active'));
+            
+            // Add 'active' class to clicked item
+            e.target.classList.add('active');
+
+            const categoryId = e.target.getAttribute('data-category-id');
+            updateAnimalDisplay(categoryId);
+
+            // Toggle visibility of direct children
+            const parentLi = e.target.closest('li');
+            const sublist = parentLi.querySelector(':scope > .subcategory');
+            if (sublist) {
+                sublist.style.display = sublist.style.display === 'none' ? 'block' : 'none';
+            }
+        }
+    });
+
+    function updateAnimalDisplay(categoryId) {
+        const animalCards = document.querySelectorAll('.category-card');
+        animalCards.forEach(card => {
+            if (categoryId === 'all' || card.getAttribute('data-category') === categoryId || card.getAttribute('data-parent-category') === categoryId) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+});
+</script>
 {% endblock %}
