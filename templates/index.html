@@ -6,6 +6,7 @@
 <script src="{% static 'js/tilt.js' %}"></script>
 <script src="{% static 'js/categories.js' %}"></script>
 <script src="{% static 'js/addToCart.js' %}"></script>
+<script src="{% static 'js/editCart.js' %}"></script>
 <main class="flex-grow container my-4">
 
     <!-- Categories Section for Mobile -->
@@ -77,7 +78,10 @@
                         <div class="card-body text-center">
                             <h5 class="card-title text-white">{{ animal.common_name }}</h5>
                             <p>{{ animal.price|floatformat:"-1" }} €</p>
-                            <button class="btn btn-warning text-white hover-bg-orange btn-add-to-cart" data-animal-id="{{ animal.id }}">Add to Cart</button>
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addToCartModal" data-animal-id="{{ animal.id }}">
+                                Add to Cart
+                            </button>
+
                         </div>
                     </div>
                 </div>
@@ -162,6 +166,7 @@
                 </div>
                 <div class="cart-item-price">${{ cart_item.total_price|floatformat:2 }}</div>
             </div>
+
             {% empty %}
             <p>Your cart is empty.</p>
             {% endfor %}
@@ -195,7 +200,4 @@
         </div>
     </section>
 </main>
-
 {% endblock %}
-
-

@@ -22,12 +22,15 @@ urlpatterns = [
     path('search/', views.search_animals, name='search_animals'),
 
     # Editing Cart
-    path('cart/item/update/<int:cart_item_id>/', views.update_cart_item, name='update_cart_item'),
-    path('cart/item/delete/<int:cart_item_id>/', views.delete_cart_item, name='delete_cart_item'),
+    path('update-cart-item-quantity/<int:item_id>/', views.update_cart_item_quantity, name='update_cart_item_quantity'),
+    path('update-cart-item-details/<int:item_id>/', views.update_cart_item_details, name='update_cart_item_details'),
+    path('remove-cart-item/<int:item_id>/', views.remove_cart_item, name='remove_cart_item'),
 
-    # Adding Cart Items
+    # Adding Cart Itemss
+    path('cart/animal/add/<int:animal_id>/', views.add_animal_to_cart, name='add_animal_to_cart'),
     path('cart/supply/add/<int:supply_id>/', views.add_supply_to_cart, name='add_supply_to_cart'),
 
     # Placing Order
     path('place_order/', views.place_order, name='place_order'),
+
 ]

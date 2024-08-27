@@ -2,10 +2,9 @@ from decimal import Decimal
 
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse, HttpResponseRedirect
+from django.http import JsonResponse, HttpResponseNotAllowed
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_POST
-
 from Store.forms import RegistrationForm
 from Store.models import *
 from django.contrib import messages
@@ -142,97 +141,6 @@ def display_supplies(request):
 
 
 @login_required
-@require_POST
-def update_cart_item(request, cart_item_id):
-    cart_item = get_object_or_404(CartItem, id=cart_item_id, cart__user=request.user)
-    quantity = int(request.POST.get('quantity', cart_item.quantity))
-    age = request.POST.get('age', cart_item.age)
-    sex = request.POST.get('sex', cart_item.sex)
-
-    cart_item.quantity = quantity
-    cart_item.age = age
-    cart_item.sex = sex
-    cart_item.save()
-
-    cart_item.cart.total_price = sum(item.total_price for item in cart_item.cart.items.all())
-    cart_item.cart.save()
-
-    return JsonResponse({
-        'success': True,
-        'cart_total': cart_item.cart.total_price,
-        'item_total': cart_item.total_price,
-    })
-
-
-@login_required
-@require_POST
-def delete_cart_item(request, cart_item_id):
-    cart_item = get_object_or_404(CartItem, id=cart_item_id, cart__user=request.user)
-    cart_item.delete()
-
-    cart_item.cart.total_price = sum(item.total_price for item in cart_item.cart.items.all())
-    cart_item.cart.save()
-
-    return JsonResponse({
-        'success': True,
-        'cart_total': cart_item.cart.total_price,
-    })
-
-
-@login_required
-def add_supply_to_cart(request, supply_id):
-    supply = get_object_or_404(Supplies, id=supply_id)
-    quantity = int(request.POST.get('quantity', 1))
-
-    user_profile = get_object_or_404(UserProfile, user=request.user)
-    cart = user_profile.cart
-
-    # Check if the supply already exists in the cart
-    cart_item, created = CartItem.objects.get_or_create(
-        cart=cart,
-        supply=supply,
-        defaults={'quantity': quantity}
-    )
-
-    if not created:
-        # If it exists, update the quantity
-        cart_item.quantity += quantity
-        cart_item.save()
-
-    return redirect('Store:cart')
-
-
-@login_required
-@require_POST
-def add_animal_to_cart(request):
-    animal_id = request.GET.get('animal_id')
-    quantity = int(request.POST.get('quantity', 1))
-    age = request.POST.get('age')
-    sex = request.POST.get('sex')
-
-    animal = get_object_or_404(Animal, id=animal_id)
-    cart, created = Cart.objects.get_or_create(user=request.user)
-
-    cart_item, created = CartItem.objects.get_or_create(
-        cart=cart,
-        animal=animal,
-        defaults={'quantity': quantity, 'age': age, 'sex': sex}
-    )
-
-    if not created:
-        # Update quantity, age, sex if the item already exists
-        cart_item.quantity += quantity
-        cart_item.age = age
-        cart_item.sex = sex
-        cart_item.save()
-
-    cart.total_price = sum(item.total_price for item in cart.items.all())
-    cart.save()
-
-    return JsonResponse({'success': True, 'cart_total': cart.total_price})
-
-
-@login_required
 def place_order(request):
     if request.method == 'POST':
         user = request.user
@@ -246,7 +154,6 @@ def place_order(request):
         )
 
         # Create a string to store order details
-        order_details = []
         order.save()
 
         # Clear the cart
@@ -258,3 +165,113 @@ def place_order(request):
         return redirect('Store:userProfile')  # Redirect to user profile or order confirmation page
 
     return redirect('Store:cart')  # Redirect back to cart if not a POST request
+
+
+@login_required
+def add_supply_to_cart(request, supply_id):
+    # Get the supply object
+    supply = get_object_or_404(Supplies, id=supply_id)
+
+    # Get the user's cart
+    cart, created = Cart.objects.get_or_create(user=request.user)
+
+    # Check if the supply is already in the cart
+    cart_item, created = CartItem.objects.get_or_create(cart=cart, supply=supply)
+
+    if not created:
+        # If it already exists in the cart, just increase the quantity
+        cart_item.quantity += 1
+    cart_item.save()
+
+    # Recalculate total price
+    cart.total_price = sum(item.total_price for item in cart.items.all())
+    cart.save()
+
+    # Redirect back to the supplies page or wherever you want
+    return redirect('Store:supplies')  # Replace with your URL name for the supplies page
+
+
+@login_required
+def add_animal_to_cart(request, animal_id):
+    if request.method == "POST":
+        # Retrieve the animal instance
+        animal = get_object_or_404(Animal, id=animal_id)
+
+        # Extract data from POST request
+        quantity = int(request.POST.get('quantity', 1))
+        age = int(request.POST.get('age', 1))
+        sex = request.POST.get('sex', 'M')
+
+        # Get or create the user's cart
+        cart, created = Cart.objects.get_or_create(user=request.user)
+
+        # Try to get or create a CartItem
+        cart_item, created = CartItem.objects.get_or_create(
+            cart=cart,
+            animal=animal,
+            age=age,
+            sex=sex,
+            defaults={'quantity': quantity}
+        )
+
+        if not created:
+            # If CartItem already exists, update the quantity
+            cart_item.quantity += quantity
+            cart_item.save()
+
+        # Redirect to the index page or any other page you want
+        return redirect('Store:index')
+
+    # If method is not POST, return a 405 Method Not Allowed response
+    return HttpResponseNotAllowed(['POST'])
+
+
+@require_POST
+def update_cart_item_quantity(request, item_id):
+    item = CartItem.objects.get(id=item_id)
+    action = request.POST.get('action')
+
+    if action == 'increase':
+        item.quantity += 1
+    elif action == 'decrease' and item.quantity > 1:
+        item.quantity -= 1
+
+    item.save()
+    return JsonResponse({
+        'quantity': item.quantity,
+        'total_price': item.total_price,
+        'cart_total': item.cart.total_price
+    })
+
+
+@require_POST
+def update_cart_item_details(request, item_id):
+    item = CartItem.objects.get(id=item_id)
+    age = request.POST.get('age')
+    sex = request.POST.get('sex')
+
+    if age:
+        item.age = int(age)
+    if sex:
+        item.sex = sex
+
+    item.save()
+    return JsonResponse({
+        'total_price': item.total_price,
+        'cart_total': item.cart.total_price
+    })
+
+
+@require_POST
+def remove_cart_item(request, item_id):
+    item = CartItem.objects.get(id=item_id)
+    cart = item.cart
+    item.delete()
+
+    cart_total = cart.get_total_price()
+
+    return JsonResponse({
+        'cart_total': cart_total,
+        'item_removed': True,
+        'cart_is_empty': cart.items.count() == 0
+    })

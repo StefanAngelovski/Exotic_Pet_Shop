@@ -17,7 +17,7 @@
                 {% endif %}
                 <p class="price">Price: ${{ animal.price }}</p>
 
-                <form method="post" action="//">
+                <form method="POST" action="{% url 'Store:add_animal_to_cart' animal.id %}">
                     {% csrf_token %}
                     <div class="row">
                         <div class="col-md-4 mb-3">
