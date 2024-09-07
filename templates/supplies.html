@@ -3,6 +3,8 @@
 {% load static %}
 {% block content %}
 <link rel="stylesheet" type="text/css" href="{% static '/css/supplies.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/cart_sidebar.css' %}">
+<script src="{% static 'js/editCart.js' %}"></script>
 <div class="container my-5">
     <h1 class="mb-5 display-4 font-weight-bold">Exotic Pet Supplies</h1>
 
@@ -17,6 +19,7 @@
                     {% endif %}
                     {{ category.name }}
                 </button>
+
                 <div id="category-{{ category.id }}" class="category-content">
                     <div class="row">
                         {% for supply in supplies %}
@@ -65,6 +68,57 @@
                 <p>At Exotic Pet Shop, we carefully curate our selection of supplies to ensure the health, happiness, and longevity of your unique companions. Our products are sourced from trusted manufacturers and undergo rigorous quality checks.</p>
                 <a href="#" class="btn btn-primary">Learn More</a>
             </div>
+        </div>
+    </div>
+
+    <!-- Cart section moved to the main flow -->
+    <div class="cart-section mt-5">
+        <h3>Your Cart</h3>
+        <div id="cart-items">
+            {% for cart_item in cart_items %}
+            <div class="cart-item" data-item-id="{{ cart_item.id }}" data-price="{{ cart_item.total_price }}" data-quantity="{{ cart_item.quantity }}">
+                <button class="cart-item-remove">&times;</button>
+                <div class="cart-item-name">
+                    {% if cart_item.animal %}
+                    {{ cart_item.animal.common_name }}
+                    {% elif cart_item.supply %}
+                    {{ cart_item.supply.name }}
+                    {% endif %}
+                </div>
+                <div class="cart-item-details">
+                    <div class="cart-item-quantity">
+                        <button class="quantity-decrease">-</button>
+                        <input type="number" value="{{ cart_item.quantity }}" min="1" max="99" class="quantity-input" readonly>
+                        <button class="quantity-increase">+</button>
+                    </div>
+                    {% if cart_item.animal %}
+                    <div class="cart-item-row">
+                        <span class="cart-item-label">Age:</span>
+                        <select id="age" name="age">
+                            <option value="1" {% if cart_item.age == 1 %}selected{% endif %}>1 year</option>
+                            <option value="2" {% if cart_item.age == 2 %}selected{% endif %}>2 years</option>
+                            <option value="3" {% if cart_item.age == 3 %}selected{% endif %}>3 years</option>
+                            <option value="4" {% if cart_item.age == 4 %}selected{% endif %}>4 years</option>
+                            <option value="5" {% if cart_item.age == 5 %}selected{% endif %}>5 years</option>
+                        </select>
+                    </div>
+                    <div class="cart-item-row">
+                        <span class="cart-item-label">Sex:</span>
+                        <select id="sex" name="sex">
+                            <option value="M" {% if cart_item.sex == "M" %}selected{% endif %}>Male</option>
+                            <option value="F" {% if cart_item.sex == "F" %}selected{% endif %}>Female</option>
+                        </select>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="cart-item-price">${{ cart_item.total_price|floatformat:2 }}</div>
+            </div>
+            {% empty %}
+            <p>Your cart is empty.</p>
+            {% endfor %}
+        </div>
+        <div class="cart-total">
+            Total: $<span id="cart-total">{{ cart.total_price|default:0|floatformat:2 }}</span>
         </div>
     </div>
 </div>

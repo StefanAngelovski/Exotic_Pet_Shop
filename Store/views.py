@@ -45,6 +45,7 @@ def display_cart(request):
     return render(request, 'cart.html', {'cart_items': cart_items, 'cart': cart, "user_profile": user_profile})
 
 
+@login_required
 def display_userProfile(request):
     user = request.user
     user_profile, created = UserProfile.objects.get_or_create(user=user)
@@ -135,7 +136,14 @@ def search_animals(request):
 def display_supplies(request):
     categories = SupplyCategory.objects.all()
     supplies = Supplies.objects.all()
-    return render(request, 'supplies.html', {'categories': categories, 'supplies': supplies})
+
+    if request.user.is_authenticated:
+        cart, created = Cart.objects.get_or_create(user=request.user)
+        cart_items = cart.items.all()
+    else:
+        cart = None
+        cart_items = []
+    return render(request, 'supplies.html', {'categories': categories, 'supplies': supplies, 'cart_items': cart_items, 'cart': cart})
 
 
 @login_required
@@ -189,7 +197,7 @@ def add_supply_to_cart(request, supply_id):
     return redirect('Store:supplies')  # Replace with your URL name for the supplies page
 
 
-@login_required
+@login_required(login_url='Store:login')
 def add_animal_to_cart(request, animal_id):
     if request.method == "POST":
         # Retrieve the animal instance

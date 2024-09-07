@@ -3,40 +3,27 @@
 {% block title %}Exotic Pet Shop{% endblock %}
 {% block content %}
 <link rel="stylesheet" type="text/css" href="{% static 'css/index.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/cart_sidebar.css' %}">
 <script src="{% static 'js/tilt.js' %}"></script>
-<script src="{% static 'js/categories.js' %}"></script>
 <script src="{% static 'js/addToCart.js' %}"></script>
 <script src="{% static 'js/editCart.js' %}"></script>
 <main class="flex-grow container my-4">
 
     <!-- Categories Section for Mobile -->
-    <div class="categories-mobile d-md-none">
+    <div class="categories-mobile d-xl-none">
         <h3>Categories</h3>
-        <ul>
+        <ul id="category-tree-mobile">
             <li>
-                <a href="#" class="parent-category active" data-category-id="all">All Animals</a>
+                <a href="#" class="category-item active" data-category-id="all">All Animals</a>
             </li>
-            {% for category in categories %}
-            <li>
-                <a href="#" class="parent-category" data-category-id="{{ category.id }}">{{ category.name }}</a>
-                {% if category.category_set.all %}
-                <ul class="child-categories" id="children-{{ category.id }}">
-                    {% for subcategory in category.category_set.all %}
-                    <li class="child-category">
-                        <a href="#" data-category-id="{{ subcategory.id }}" data-parent-id="{{ category.id }}">{{ subcategory.name }}</a>
-                    </li>
-                    {% endfor %}
-                </ul>
-                {% endif %}
-            </li>
-            {% endfor %}
+            <!-- We'll populate this dynamically with JavaScript -->
         </ul>
     </div>
 
     <!-- Categories Sidebar for Desktop -->
-    <div class="sidebar sidebar-left d-none d-md-block">
+    <div class="sidebar sidebar-left d-none d-xl-block" style="z-index: 999">
         <h3>Categories</h3>
-        <ul id="category-tree">
+        <ul id="category-tree-desktop">
             <li>
                 <a href="#" class="category-item active" data-category-id="all">All Animals</a>
             </li>
@@ -57,7 +44,7 @@
         <div class="bg-warning p-4 rounded-bottom">
             <div class="row">
                 {% for animal in animals %}
-                <div class="col-4 col-md-4 col-lg-2 mb-4 category-card" data-category="{{ animal.category.id }}" data-parent-category="{{ animal.category.parent.id|default:animal.category.id }}">
+                <div class="col-12 col-md-4 col-lg-2 mb-4 category-card" data-category="{{ animal.category.id }}" data-parent-category="{{ animal.category.parent.id|default:animal.category.id }}">
                     <div class="card h-100" style="background-color: rgb(24, 26, 27)">
                         <a href="{% url 'Store:animal_details' animal.id %}">
                             <img src="{{ animal.image.url }}" class="card-img-top" alt="{{ animal.common_name }}">
@@ -112,7 +99,7 @@
     </div>
 
     <!-- Right Sidebar (Cart) -->
-    <div class="sidebar sidebar-right d-none d-md-block">
+    <div class="sidebar sidebar-right d-none d-xl-block" style="z-index: 999">
         <h3>Your Cart</h3>
         <div id="cart-items">
             {% for cart_item in cart_items %}
@@ -206,9 +193,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
         let html = `<ul class="subcategory" style="display: ${parentId === null ? 'block' : 'none'};">`;
         for (const child of children) {
+            const hasChildren = categories.some(category => category.parent === child.id);
             html += `
                 <li>
-                    <a href="#" class="category-item" data-category-id="${child.id}" style="padding-left: ${depth * 20}px;">${child.name}</a>
+                    <div class="category-item-wrapper" style="padding-left: ${depth * 20}px;">
+                        ${hasChildren ? '<span class="category-toggle">&#9660;</span>' : '<span class="category-toggle-placeholder">&#9654;</span>'}
+                        <a href="#" class="category-item" data-category-id="${child.id}">${child.name}</a>
+                    </div>
+                    ${depth > 0 ? '<div class="category-branch"></div>' : ''}
                     ${buildCategoryTree(categories, child.id, depth + 1)}
                 </li>
             `;
@@ -217,30 +209,45 @@ document.addEventListener('DOMContentLoaded', function() {
         return html;
     }
 
-    const categoryTree = document.getElementById('category-tree');
-    categoryTree.innerHTML += buildCategoryTree(categories);
+    const categoryTreeMobile = document.getElementById('category-tree-mobile');
+    const categoryTreeDesktop = document.getElementById('category-tree-desktop');
+    
+    if (categoryTreeMobile) {
+        categoryTreeMobile.innerHTML += buildCategoryTree(categories);
+    }
+    if (categoryTreeDesktop) {
+        categoryTreeDesktop.innerHTML += buildCategoryTree(categories);
+    }
 
-    categoryTree.addEventListener('click', function(e) {
-        if (e.target.classList.contains('category-item')) {
-            e.preventDefault();
-            
-            // Remove 'active' class from all items
-            document.querySelectorAll('.category-item').forEach(item => item.classList.remove('active'));
-            
-            // Add 'active' class to clicked item
-            e.target.classList.add('active');
+    function setupCategoryTree(treeElement) {
+        if (!treeElement) return;
 
-            const categoryId = e.target.getAttribute('data-category-id');
-            updateAnimalDisplay(categoryId);
+        treeElement.addEventListener('click', function(e) {
+            if (e.target.classList.contains('category-item') || e.target.classList.contains('category-toggle')) {
+                e.preventDefault();
+                const parentLi = e.target.closest('li');
+                const sublist = parentLi.querySelector(':scope > .subcategory');
+                const toggle = parentLi.querySelector('.category-toggle');
 
-            // Toggle visibility of direct children
-            const parentLi = e.target.closest('li');
-            const sublist = parentLi.querySelector(':scope > .subcategory');
-            if (sublist) {
-                sublist.style.display = sublist.style.display === 'none' ? 'block' : 'none';
+                if (sublist) {
+                    sublist.style.display = sublist.style.display === 'none' ? 'block' : 'none';
+                    if (toggle) {
+                        toggle.innerHTML = sublist.style.display === 'none' ? '&#9654;' : '&#9660;';
+                    }
+                }
+
+                if (e.target.classList.contains('category-item')) {
+                    document.querySelectorAll('.category-item').forEach(item => item.classList.remove('active'));
+                    e.target.classList.add('active');
+                    const categoryId = e.target.getAttribute('data-category-id');
+                    updateAnimalDisplay(categoryId);
+                }
             }
-        }
-    });
+        });
+    }
+
+    setupCategoryTree(categoryTreeMobile);
+    setupCategoryTree(categoryTreeDesktop);
 
     function updateAnimalDisplay(categoryId) {
         const animalCards = document.querySelectorAll('.category-card');

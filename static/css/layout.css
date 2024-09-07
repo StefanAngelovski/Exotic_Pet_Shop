@@ -19,7 +19,7 @@ input[type="text"], input[type="email"], input[type="tel"], textarea, select {
 
 .search-bar {
     position: absolute;
-    right: 100%;
+    right: 120%;
     width: 0;
     top: -5px;
     border: none;
@@ -139,5 +139,16 @@ input[type="text"], input[type="email"], input[type="tel"], textarea, select {
     .nav-item {
         width: 100%;
         padding: 10px 15px;
+    }
+
+
+
+
+    .search-bar.active {
+        width: 190px;
+    }
+
+    .search-suggestions {
+        width: 178px;
     }
 }
