@@ -157,3 +157,70 @@ card {
 
 
 
+/* Mobile Categories Dropdown Styles */
+.categories-mobile {
+    margin-bottom: 20px;
+    background-color: #1a2636;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.categories-mobile h3 {
+    background-color: #2c3e50;
+    color: #ecf0f1;
+    padding: 12px 15px;
+    margin: 0;
+    font-size: 1.2em;
+}
+
+#category-tree-mobile {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+#category-tree-mobile li {
+    border-bottom: 1px solid #34495e;
+}
+
+#category-tree-mobile li:last-child {
+    border-bottom: none;
+}
+
+.category-item {
+    display: block;
+    padding: 12px 15px;
+    color: #bdc3c7;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.category-item:hover, .category-item:focus {
+    background-color: #2c3e50;
+    color: #ecf0f1;
+}
+
+.category-item.active {
+    background-color: #3498db;
+    color: #ffffff;
+}
+
+.subcategory {
+    display: none;
+    list-style-type: none;
+    background-color: #243447;
+}
+
+.category-toggle {
+    float: right;
+    transition: transform 0.3s ease;
+    color: #7f8c8d;
+}
+
+.sidebar .category-toggle {
+    transform: rotate(0deg);
+}
+
+.sidebar .category-toggle.open {
+    transform: rotate(-180deg);
+}

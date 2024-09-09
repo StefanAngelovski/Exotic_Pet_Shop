@@ -1,38 +1,83 @@
+/* Base styles */
 .profile-container {
-        display: flex;
-        justify-content: space-between;
-        flex-wrap: wrap;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.profile-section {
+    width: 48%;
+    margin-bottom: 20px;
+}
+
+button {
+    background-color: #ffd700;
+    color: #1a2030;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #e6c200;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    border: 1px solid #ffd700;
+    padding: 10px;
+    text-align: left;
+}
+
+th {
+    background-color: #2a3040;
+}
+
+/* Responsive styles for mobile devices */
+@media screen and (max-width: 768px) {
+    .profile-container {
+        flex-direction: column;
     }
 
     .profile-section {
-        width: 48%;
-        margin-bottom: 20px;
-    }
-
-    button {
-        background-color: #ffd700;
-        color: #1a2030;
-        padding: 10px 20px;
-        border: none;
-        cursor: pointer;
-    }
-
-    button:hover {
-        background-color: #e6c200;
-    }
-
-    table {
         width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
     }
 
-    th, td {
-        border: 1px solid #ffd700;
-        padding: 10px;
-        text-align: left;
+    h1 {
+        font-size: 24px;
     }
 
-    th {
-        background-color: #2a3040;
+    h2 {
+        font-size: 20px;
     }
+
+    /* Make form inputs full width */
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    select,
+    textarea {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+
+    tr {
+        margin-bottom: 10px;
+    }
+
+    td:before {
+        content: attr(data-label);
+        position: absolute;
+        left: 6px;
+        width: 45%;
+        padding-right: 10px;
+        white-space: nowrap;
+        font-weight: bold;
+    }
+}

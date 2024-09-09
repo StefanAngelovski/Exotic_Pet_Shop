@@ -7,6 +7,8 @@
 <script src="{% static 'js/tilt.js' %}"></script>
 <script src="{% static 'js/addToCart.js' %}"></script>
 <script src="{% static 'js/editCart.js' %}"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
 <main class="flex-grow container my-4">
 
     <!-- Categories Section for Mobile -->
@@ -190,14 +192,14 @@ document.addEventListener('DOMContentLoaded', function() {
     function buildCategoryTree(categories, parentId = null, depth = 0) {
         const children = categories.filter(category => category.parent === parentId);
         if (children.length === 0) return '';
-
+    
         let html = `<ul class="subcategory" style="display: ${parentId === null ? 'block' : 'none'};">`;
         for (const child of children) {
             const hasChildren = categories.some(category => category.parent === child.id);
             html += `
                 <li>
                     <div class="category-item-wrapper" style="padding-left: ${depth * 20}px;">
-                        ${hasChildren ? '<span class="category-toggle">&#9660;</span>' : '<span class="category-toggle-placeholder">&#9654;</span>'}
+                        ${hasChildren ? '<i class="fas fa-chevron-down category-toggle"></i>' : '<i class="fas fa-chevron-right category-toggle-placeholder"></i>'}
                         <a href="#" class="category-item" data-category-id="${child.id}">${child.name}</a>
                     </div>
                     ${depth > 0 ? '<div class="category-branch"></div>' : ''}
@@ -208,6 +210,7 @@ document.addEventListener('DOMContentLoaded', function() {
         html += '</ul>';
         return html;
     }
+
 
     const categoryTreeMobile = document.getElementById('category-tree-mobile');
     const categoryTreeDesktop = document.getElementById('category-tree-desktop');
@@ -251,11 +254,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function updateAnimalDisplay(categoryId) {
         const animalCards = document.querySelectorAll('.category-card');
-        animalCards.forEach(card => {
+        animalCards.forEach((card, index) => {
             if (categoryId === 'all' || card.getAttribute('data-category') === categoryId || card.getAttribute('data-parent-category') === categoryId) {
                 card.style.display = 'block';
+                // Add animation class with delay based on index
+                setTimeout(() => {
+                    card.classList.add('card-animate');
+                }, index * 50); // 50ms delay between each card
             } else {
                 card.style.display = 'none';
+                card.classList.remove('card-animate');
             }
         });
     }
