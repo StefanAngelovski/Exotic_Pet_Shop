@@ -193,8 +193,7 @@ def add_supply_to_cart(request, supply_id):
     cart.total_price = sum(item.total_price for item in cart.items.all())
     cart.save()
 
-    # Redirect back to the supplies page or wherever you want
-    return redirect('Store:supplies')  # Replace with your URL name for the supplies page
+    return redirect('Store:supplies')
 
 
 @login_required(login_url='Store:login')
@@ -270,14 +269,17 @@ def update_cart_item_details(request, item_id):
 
 @require_POST
 def remove_cart_item(request, item_id):
-    item = CartItem.objects.get(id=item_id)
-    cart = item.cart
+    # Get the cart item
+    item = get_object_or_404(CartItem, id=item_id)
+    cart = item.cart  # Get the associated cart
     item.delete()
 
-    cart_total = cart.get_total_price()
+    # Recalculate the cart total after removing the item
+    cart.recalculate_total()
+    cart_total = cart.total_price  # Now get the updated cart total
 
     return JsonResponse({
         'cart_total': cart_total,
         'item_removed': True,
-        'cart_is_empty': cart.items.count() == 0
+        'cart_is_empty': cart.items.count() == 0  # Check if cart is empty
     })

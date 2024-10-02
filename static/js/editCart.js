@@ -14,6 +14,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+
+
+
+
     // Handle age and sex change
     cartItems.addEventListener('change', function(event) {
         const target = event.target;
@@ -27,6 +31,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+
+
     // Handle cart item removal
     cartItems.addEventListener('click', function(event) {
         const target = event.target;
@@ -37,6 +43,11 @@ document.addEventListener('DOMContentLoaded', function() {
             removeCartItem(item_id, cartItem);
         }
     });
+
+
+
+
+
 
     function updateCartItemQuantity(item_id, action, cartItem) {
         fetch(`/update-cart-item-quantity/${item_id}/`, {
@@ -50,15 +61,29 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(data => {
             if (data.quantity !== undefined) {
-                cartItem.querySelector('.quantity-input').value = data.quantity;
-                cartItem.querySelector('.cart-item-price').innerText = `$${data.total_price.toFixed(2)}`;
-                updateCartTotal(data.cart_total);
+                const quantityInput = cartItem.querySelector('.quantity-input');
+                quantityInput.value = data.quantity;
+
+                // Convert total_price and cart_total to numbers
+                const totalPrice = parseFloat(data.total_price); // Convert to float
+                const cartTotal = parseFloat(data.cart_total); // Convert to float
+
+                const priceDisplay = cartItem.querySelector('.cart-item-price');
+                priceDisplay.innerText = `$${totalPrice.toFixed(2)}`; // Display formatted price
+
+                updateCartTotal(cartTotal); // Pass the total as a number
             } else {
                 console.error('Failed to update quantity:', data.error);
             }
         })
         .catch(error => console.error('Error:', error));
     }
+
+
+
+
+
+
 
     function updateCartItemDetails(item_id, age, sex, cartItem) {
         fetch(`/update-cart-item-details/${item_id}/`, {
@@ -81,6 +106,9 @@ document.addEventListener('DOMContentLoaded', function() {
         .catch(error => console.error('Error:', error));
     }
 
+
+
+
     function removeCartItem(item_id, cartItem) {
         fetch(`/remove-cart-item/${item_id}/`, {
             method: 'POST',
@@ -91,11 +119,18 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(response => response.json())
         .then(data => {
+            // Check if the item was successfully removed
             if (data.item_removed) {
+                // Remove the cart item from the DOM
                 cartItem.remove();
-                updateCartTotal(data.cart_total);
+
+                // Update the total price in the cart
+                const cartTotalValue = parseFloat(data.cart_total); // Convert to float
+                updateCartTotal(cartTotalValue); // Update cart total dynamically
+
+                // Check if the cart is empty and update the message
                 if (data.cart_is_empty) {
-                    cartItems.innerHTML = '<p>Your cart is empty.</p>';
+                    cartItems.innerHTML = '<p>Your cart is empty.</p>'; // Display empty cart message
                 }
             } else {
                 console.error('Failed to remove item:', data.error);
@@ -103,6 +138,12 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .catch(error => console.error('Error:', error));
     }
+
+
+
+
+
+
 
     function updateCartTotal(total) {
         cartTotal.innerText = total.toFixed(2);

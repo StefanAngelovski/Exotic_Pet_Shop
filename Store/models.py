@@ -15,7 +15,7 @@ class Order(models.Model):
     def __str__(self):
         return str(self.id)
 
-    
+
 class Category(models.Model):
     name = models.CharField(max_length=200)
     parent = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True)
@@ -70,6 +70,10 @@ class Cart(models.Model):
 
     def __str__(self):
         return self.user.username + "'s cart"
+
+    def recalculate_total(self):
+        self.total_price = sum(item.total_price for item in self.items.all())
+        self.save()
 
 
 class CartItem(models.Model):
