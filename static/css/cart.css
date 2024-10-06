@@ -8,7 +8,8 @@
     width: 48%;
 }
 
-input, select {
+.checkout-container input,
+.checkout-container select {
     width: 100%;
     padding: 10px;
     margin-bottom: 10px;
@@ -17,7 +18,7 @@ input, select {
     color: #ffffff;
 }
 
-button {
+.checkout-container button {
     background-color: #ffd700;
     color: #1a2030;
     padding: 10px 20px;
@@ -26,7 +27,7 @@ button {
     width: 100%;
 }
 
-button:hover {
+.checkout-container button:hover {
     background-color: #e6c200;
 }
 
