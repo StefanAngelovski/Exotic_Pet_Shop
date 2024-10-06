@@ -50,29 +50,6 @@ body {
     transition: all 0.3s ease;
 }
 
-.sidebar a:hover {
-    background-color: #4a5568;
-    color: #f7fafc;
-}
-
- .child-categories {
-    display: none;
-    margin-left: 20px;
-}
-
-.child-categories.show {
-    display: block;
-}
-
-.parent-category::after {
-    content: '\25BC';
-    float: right;
-    transition: transform 0.3s ease;
-}
-
-.parent-category.open::after {
-    transform: rotate(-180deg);
-}
 
 .category-card {
     display: none;
@@ -120,16 +97,6 @@ body {
 .btn-primary:hover {
     background-color: #dd6b20;
     border-color: #dd6b20;
-}
-
-.sidebar .parent-category::after {
-    content: '\25BC';
-    float: right;
-    transition: transform 0.3s ease;
-}
-
-.sidebar .parent-category.open::after {
-    transform: rotate(-180deg);
 }
 
 a:hover{
@@ -217,10 +184,47 @@ card {
     color: #7f8c8d;
 }
 
-.sidebar .category-toggle {
-    transform: rotate(0deg);
+
+
+
+
+
+@keyframes swipeRight {
+    0% {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
 }
 
-.sidebar .category-toggle.open {
-    transform: rotate(-180deg);
+.category-card {
+    opacity: 0;
 }
+
+.category-card.animate {
+    animation: swipeRight 0.5s ease-out forwards;
+}
+
+
+
+
+/* Category tree styles */
+.category-item-wrapper {
+    display: flex;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+
+.category-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 12px;
+    color: #e2e8f0;
+}
+
+

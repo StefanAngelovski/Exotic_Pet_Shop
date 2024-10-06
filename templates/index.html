@@ -7,6 +7,8 @@
 <script src="{% static 'js/tilt.js' %}"></script>
 <script src="{% static 'js/addToCart.js' %}"></script>
 <script src="{% static 'js/editCart.js' %}"></script>
+<script src="{% static 'js/cardAnimation.js' %}"></script>
+<script src="{% static 'js/viewAllButton.js' %}"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
 <main class="flex-grow container my-4">
@@ -63,7 +65,11 @@
                 </div>
                 {% endfor %}
             </div>
-            <button class="btn btn-dark text-warning font-weight-bold" id="toggle-button">View All {{ animal_count }} Animals</button>
+            <div id="view-all-button" style="display: none;">
+                <button class="btn btn-dark text-warning font-weight-bold" id="toggle-button">
+                    View All {{ animal_count }} Animals
+                </button>
+            </div>
         </div>
     </section>
 
@@ -178,93 +184,134 @@
 </main>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const categories = [
-            {% for category in categories %}
-                {
-                    id: {{ category.id }},
-                    name: "{{ category.name }}",
-                    parent: {{ category.parent.id|default:"null" }}
-                },
-            {% endfor %}
-        ];
-    
-        function buildCategoryTree(categories, parentId = null, depth = 0) {
-            const children = categories.filter(category => category.parent === parentId);
-            if (children.length === 0) return '';
-        
-            let html = `<ul class="subcategory" style="display: ${parentId === null ? 'block' : 'none'};">`;
-            for (const child of children) {
-                html += `
-                    <li>
-                        <div class="category-item-wrapper" style="padding-left: ${depth * 20}px;">
-                            <a href="#" class="category-item" data-category-id="${child.id}">${child.name}</a>
-                        </div>
-                        ${depth > 0 ? '<div class="category-branch"></div>' : ''}
-                        ${buildCategoryTree(categories, child.id, depth + 1)}
-                    </li>
-                `;
-            }
-            html += '</ul>';
-            return html;
+document.addEventListener('DOMContentLoaded', function() {
+    const style = document.createElement('style');
+    style.textContent = `
+        .category-card.hidden {
+            display: none !important;
         }
-    
-    
-        const categoryTreeMobile = document.getElementById('category-tree-mobile');
-        const categoryTreeDesktop = document.getElementById('category-tree-desktop');
-        
-        if (categoryTreeMobile) {
-            categoryTreeMobile.innerHTML += buildCategoryTree(categories);
+    `;
+    document.head.appendChild(style);
+
+    const categories = [
+        {% for category in categories %}
+            {
+                id: {{ category.id }},
+                name: "{{ category.name }}",
+                parent: {{ category.parent.id|default:"null" }}
+            },
+        {% endfor %}
+    ];
+
+    const categoryMap = {};
+
+    categories.forEach(category => {
+        if (!categoryMap[category.parent]) {
+            categoryMap[category.parent] = [];
         }
-        if (categoryTreeDesktop) {
-            categoryTreeDesktop.innerHTML += buildCategoryTree(categories);
-        }
-    
-        function setupCategoryTree(treeElement) {
-            if (!treeElement) return;
-    
-            treeElement.addEventListener('click', function(e) {
-                if (e.target.classList.contains('category-item') || e.target.classList.contains('category-toggle')) {
-                    e.preventDefault();
-                    const parentLi = e.target.closest('li');
-                    const sublist = parentLi.querySelector(':scope > .subcategory');
-                    const toggle = parentLi.querySelector('.category-toggle');
-    
-                    if (sublist) {
-                        sublist.style.display = sublist.style.display === 'none' ? 'block' : 'none';
-                        if (toggle) {
-                            toggle.innerHTML = sublist.style.display === 'none' ? '&#9654;' : '&#9660;';
-                        }
-                    }
-    
-                    if (e.target.classList.contains('category-item')) {
-                        document.querySelectorAll('.category-item').forEach(item => item.classList.remove('active'));
-                        e.target.classList.add('active');
-                        const categoryId = e.target.getAttribute('data-category-id');
-                        updateAnimalDisplay(categoryId);
-                    }
-                }
-            });
-        }
-    
-        setupCategoryTree(categoryTreeMobile);
-        setupCategoryTree(categoryTreeDesktop);
-    
-        function updateAnimalDisplay(categoryId) {
-            const animalCards = document.querySelectorAll('.category-card');
-            animalCards.forEach((card, index) => {
-                if (categoryId === 'all' || card.getAttribute('data-category') === categoryId || card.getAttribute('data-parent-category') === categoryId) {
-                    card.style.display = 'block';
-                    // Add animation class with delay based on index
-                    setTimeout(() => {
-                        card.classList.add('card-animate');
-                    }, index * 50); // 50ms delay between each card
-                } else {
-                    card.style.display = 'none';
-                    card.classList.remove('card-animate');
-                }
-            });
-        }
+        categoryMap[category.parent].push(category.id);
     });
+
+    function getAllChildCategories(categoryId) {
+        let childCategories = [];
+
+        function findChildren(parentId) {
+            if (categoryMap[parentId]) {
+                categoryMap[parentId].forEach(childId => {
+                    childCategories.push(childId);
+                    findChildren(childId);
+                });
+            }
+        }
+
+        findChildren(categoryId);
+        return childCategories;
+    }
+
+    function buildCategoryTree(categories, parentId = null, depth = 0) {
+        const children = categories.filter(category => category.parent === parentId);
+        if (children.length === 0) return '';
+
+        let html = `<ul class="subcategory pl-0" style="display: ${parentId === null ? 'block' : 'none'};">`;
+        for (const child of children) {
+            const hasChildren = categories.some(c => c.parent === child.id);
+            html += `
+                <li>
+                    <div class="category-item-wrapper" style="padding-left: ${depth * 2}vh;">
+                        <a href="#" class="category-item" data-category-id="${child.id}">${child.name}</a>
+                        ${hasChildren ? `<button class="category-toggle">&#9655;</button>` : ''}
+                    </div>
+                    ${depth > 0 ? '<div class="category-branch"></div>' : ''}
+                    ${buildCategoryTree(categories, child.id, depth + 1)}
+                </li>
+            `;
+        }
+        html += '</ul>';
+        return html;
+    }
+
+    const categoryTreeMobile = document.getElementById('category-tree-mobile');
+    const categoryTreeDesktop = document.getElementById('category-tree-desktop');
+
+    if (categoryTreeMobile) {
+        categoryTreeMobile.innerHTML += buildCategoryTree(categories);
+    }
+    if (categoryTreeDesktop) {
+        categoryTreeDesktop.innerHTML += buildCategoryTree(categories);
+    }
+
+    function setupCategoryTree(treeElement) {
+        if (!treeElement) return;
+
+        treeElement.addEventListener('click', function(e) {
+            if (e.target.classList.contains('category-item')) {
+                e.preventDefault();
+                document.querySelectorAll('.category-item').forEach(item => item.classList.remove('active'));
+                e.target.classList.add('active');
+                const categoryId = e.target.getAttribute('data-category-id');
+                updateAnimalDisplay(categoryId);
+            } else if (e.target.classList.contains('category-toggle')) {
+                e.preventDefault();
+                const parentLi = e.target.closest('li');
+                const sublist = parentLi.querySelector(':scope > .subcategory');
+
+                if (sublist) {
+                    sublist.style.display = sublist.style.display === 'none' ? 'block' : 'none';
+                    e.target.innerHTML = sublist.style.display === 'none' ? '&#9655;' : '&#9660;';
+                }
+            }
+        });
+    }
+
+    setupCategoryTree(categoryTreeMobile);
+    setupCategoryTree(categoryTreeDesktop);
+
+    function updateAnimalDisplay(categoryId) {
+        const selectedCategory = categoryId === 'all' ? null : parseInt(categoryId);
+        const childCategories = selectedCategory ? getAllChildCategories(selectedCategory) : [];
+
+        const animalCards = document.querySelectorAll('.category-card');
+
+        animalCards.forEach((card) => {
+            const animalCategoryId = parseInt(card.getAttribute('data-category'));
+            const parentCategoryId = parseInt(card.getAttribute('data-parent-category'));
+
+            let shouldShow = categoryId === 'all' ||
+                             animalCategoryId === selectedCategory ||
+                             parentCategoryId === selectedCategory ||
+                             childCategories.includes(animalCategoryId);
+
+            if (shouldShow) {
+                card.classList.remove('hidden');
+            } else {
+                card.classList.add('hidden');
+            }
+        });
+    }
+
+    // Initialize with "All Animals" selected
+    updateAnimalDisplay('all');
+});
 </script>
 {% endblock %}
+

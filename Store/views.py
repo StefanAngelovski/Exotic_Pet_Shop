@@ -22,7 +22,7 @@ def display_index(request):
         cart = None
         cart_items = []
 
-    categories = Category.objects.all()  # Get all categories
+    categories = Category.objects.all()  
     return render(request, 'index.html',
                   {'animals': animals, 'animal_count': animal_count, 'cart_items': cart_items, 'cart': cart,
                    'categories': categories})
@@ -41,7 +41,7 @@ def display_cart(request):
     user = request.user
     user_profile, created = UserProfile.objects.get_or_create(user=user)
     cart, created = Cart.objects.get_or_create(user=request.user)
-    cart_items = cart.items.all()  # Use the related_name 'items' we set in the CartItem model
+    cart_items = cart.items.all()
     return render(request, 'cart.html', {'cart_items': cart_items, 'cart': cart, "user_profile": user_profile})
 
 
@@ -59,7 +59,6 @@ def display_register(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            # Create a cart
             Cart.objects.get_or_create(user=user)
             messages.success(request, 'Account created successfully')
             return redirect('Store:userProfile')
