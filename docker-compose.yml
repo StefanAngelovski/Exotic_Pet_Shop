@@ -4,4 +4,5 @@ services:
     env_file: .env
     ports:
       - "12342:8000"
-
+    volumes:
+      - ./db/db.sqlite3:/app/db.sqlite3
