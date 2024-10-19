@@ -11,21 +11,9 @@
 <script src="{% static 'js/viewAllButton.js' %}"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
-<main class="flex-grow container my-4">
-
-    <!-- Categories Section for Mobile -->
-    <div class="categories-mobile d-xl-none">
-        <h3>Categories</h3>
-        <ul id="category-tree-mobile">
-            <li>
-                <a href="#" class="category-item active" data-category-id="all">All Animals</a>
-            </li>
-            <!-- We'll populate this dynamically with JavaScript -->
-        </ul>
-    </div>
-
+<div class="page-container">
     <!-- Categories Sidebar for Desktop -->
-    <div class="sidebar sidebar-left d-none d-xl-block" style="z-index: 999">
+    <div class="sidebar sidebar-left d-none d-xl-block">
         <h3>Categories</h3>
         <ul id="category-tree-desktop">
             <li>
@@ -35,79 +23,82 @@
         </ul>
     </div>
 
-    <section class="mb-5">
-        <h1 class="display-4 font-weight-bold mb-4">Welcome to Exotic Pet Shop</h1>
-        <p class="lead">Discover the perfect companion from our wide selection of exotic pets.</p>
-    </section>
-
-    <!-- Animal list -->
-    <section>
-        <div class="bg-warning p-4 rounded-top" style="opacity: 90%">
-            <h2 class="h3 font-weight-bold">Featured Animals</h2>
+    <main class="main-content">
+        <!-- Categories Section for Mobile -->
+        <div class="categories-mobile d-xl-none">
+            <h3>Categories</h3>
+            <ul id="category-tree-mobile">
+                <li>
+                    <a href="#" class="category-item active" data-category-id="all">All Animals</a>
+                </li>
+                <!-- We'll populate this dynamically with JavaScript -->
+            </ul>
         </div>
-        <div class="bg-warning p-4 rounded-bottom">
-            <div class="row">
-                {% for animal in animals %}
-                <div class="col-12 col-md-4 col-lg-2  mb-4 category-card" data-category="{{ animal.category.id }}" data-parent-category="{{ animal.category.parent.id|default:animal.category.id }}">
-                    <div class="card h-100" style="background-color: rgb(24, 26, 27)">
-                        <a href="{% url 'Store:animal_details' animal.id %}">
-                            <img src="{{ animal.image.url }}" class="card-img-top" alt="{{ animal.common_name }}">
-                        </a>
-                        <div class="card-body text-center">
-                            <h5 class="card-title text-white">{{ animal.common_name }}</h5>
-                            <p>{{ animal.price|floatformat:"-1" }} €</p>
-                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addToCartModal" data-animal-id="{{ animal.id }}">
-                                Add to Cart
-                            </button>
 
+        <section class="mb-5">
+            <h1 class="display-4 font-weight-bold mb-4">Welcome to Exotic Pet Shop</h1>
+            <p class="lead">Discover the perfect companion from our wide selection of exotic pets.</p>
+        </section>
+
+        <!-- Animal list -->
+        <section>
+            <div class="bg-warning p-4 rounded-top" style="opacity: 90%">
+                <h2 class="h3 font-weight-bold">Featured Animals</h2>
+            </div>
+            <div class="bg-warning p-4 rounded-bottom">
+                <div class="row">
+                    {% for animal in animals %}
+                    <div class="col-12 col-md-4 col-lg-2 mb-4 category-card" data-category="{{ animal.category.id }}" data-parent-category="{{ animal.category.parent.id|default:animal.category.id }}">
+                        <div class="card h-100" style="background-color: rgb(24, 26, 27)">
+                            <a href="{% url 'Store:animal_details' animal.id %}">
+                                <img src="{{ animal.image.url }}" class="card-img-top" alt="{{ animal.common_name }}">
+                            </a>
+                            <div class="card-body text-center">
+                                <h5 class="card-title text-white">{{ animal.common_name }}</h5>
+                                <p>{{ animal.price|floatformat:"-1" }} €</p>
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addToCartModal" data-animal-id="{{ animal.id }}">
+                                    Add to Cart
+                                </button>
+                            </div>
                         </div>
                     </div>
+                    {% endfor %}
                 </div>
-                {% endfor %}
+                <div id="view-all-button" style="display: none;">
+                    <button class="btn btn-dark text-warning font-weight-bold" id="toggle-button">
+                        View All {{ animal_count }} Animals
+                    </button>
+                </div>
             </div>
-            <div id="view-all-button" style="display: none;">
-                <button class="btn btn-dark text-warning font-weight-bold" id="toggle-button">
-                    View All {{ animal_count }} Animals
-                </button>
-            </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Modal -->
-    <div class="modal fade" id="addToCartModal" tabindex="-1" aria-labelledby="addToCartModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addToCartModalLabel">Add to Cart</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <section class="mt-5">
+            <h2 class="h3 font-weight-bold mb-4">Why Choose Us?</h2>
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="bg-secondary p-4 rounded">
+                        <h3 class="h5 font-weight-bold">Expert Care</h3>
+                        <p>Our team of experienced professionals ensures the health and well-being of all our animals.</p>
+                    </div>
                 </div>
-                <div class="modal-body">
-                    <form id="addToCartForm" method="POST">
-                        {% csrf_token %}
-                        <div class="mb-3">
-                            <label for="quantity" class="form-label">Quantity</label>
-                            <input type="number" class="form-control" id="quantity" name="quantity" min="1" value="1">
-                        </div>
-                        <div class="mb-3">
-                            <label for="age" class="form-label">Age</label>
-                            <input type="number" class="form-control" id="age" name="age" min="1" value="1">
-                        </div>
-                        <div class="mb-3">
-                            <label for="sex" class="form-label">Sex</label>
-                            <select id="sex" name="sex" class="form-select">
-                                <option value="M">Male</option>
-                                <option value="F">Female</option>
-                            </select>
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100">Add to Cart</button>
-                    </form>
+                <div class="col-md-4 mb-4">
+                    <div class="bg-secondary p-4 rounded">
+                        <h3 class="h5 font-weight-bold">Wide Selection</h3>
+                        <p>From reptiles to amphibians, we offer a diverse range of exotic pets to suit every preference.</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="bg-secondary p-4 rounded">
+                        <h3 class="h5 font-weight-bold">Educational Resources</h3>
+                        <p>We provide comprehensive care guides and tips to help you care for your new pet.</p>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
+        </section>
+    </main>
 
     <!-- Right Sidebar (Cart) -->
-    <div class="sidebar sidebar-right d-none d-xl-block" style="z-index: 999">
+    <div class="sidebar sidebar-right d-none d-xl-block">
         <h3>Your Cart</h3>
         <div id="cart-items">
             {% for cart_item in cart_items %}
@@ -148,7 +139,6 @@
                 </div>
                 <div class="cart-item-price">${{ cart_item.total_price|floatformat:2 }}</div>
             </div>
-
             {% empty %}
             <p>Your cart is empty.</p>
             {% endfor %}
@@ -157,31 +147,40 @@
             Total: $<span id="cart-total">{{ cart.total_price|default:0|floatformat:2 }}</span>
         </div>
     </div>
+</div>
 
-    <section class="mt-5">
-        <h2 class="h3 font-weight-bold mb-4">Why Choose Us?</h2>
-        <div class="row">
-            <div class="col-md-4 mb-4">
-                <div class="bg-secondary p-4 rounded">
-                    <h3 class="h5 font-weight-bold">Expert Care</h3>
-                    <p>Our team of experienced professionals ensures the health and well-being of all our animals.</p>
-                </div>
+<!-- Modal -->
+<div class="modal fade" id="addToCartModal" tabindex="-1" aria-labelledby="addToCartModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addToCartModalLabel">Add to Cart</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="col-md-4 mb-4">
-                <div class="bg-secondary p-4 rounded">
-                    <h3 class="h5 font-weight-bold">Wide Selection</h3>
-                    <p>From reptiles to amphibians, we offer a diverse range of exotic pets to suit every preference.</p>
-                </div>
-            </div>
-            <div class="col-md-4 mb-4">
-                <div class="bg-secondary p-4 rounded">
-                    <h3 class="h5 font-weight-bold">Educational Resources</h3>
-                    <p>We provide comprehensive care guides and tips to help you care for your new pet.</p>
-                </div>
+            <div class="modal-body">
+                <form id="addToCartForm" method="POST">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="quantity" class="form-label">Quantity</label>
+                        <input type="number" class="form-control" id="quantity" name="quantity" min="1" value="1">
+                    </div>
+                    <div class="mb-3">
+                        <label for="age" class="form-label">Age</label>
+                        <input type="number" class="form-control" id="age" name="age" min="1" value="1">
+                    </div>
+                    <div class="mb-3">
+                        <label for="sex" class="form-label">Sex</label>
+                        <select id="sex" name="sex" class="form-select">
+                            <option value="M">Male</option>
+                            <option value="F">Female</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Add to Cart</button>
+                </form>
             </div>
         </div>
-    </section>
-</main>
+    </div>
+</div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {

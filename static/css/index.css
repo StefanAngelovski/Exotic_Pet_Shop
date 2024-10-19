@@ -1,20 +1,38 @@
+/* Global body styles */
 body {
     color: #ffffff;
     background-color: #1a202c;
+    margin: 0;
+    padding: 0;
 }
 
+/* Sidebar */
 .sidebar {
-    width: 250px;
+    width: 80vh; /* Overwritten from 250px */
     height: 100vh;
-    position: fixed;
-    top: 0;
     padding: 20px;
     overflow-y: auto;
     background-color: #2d3748;
     color: white;
     border: 1px solid #4a5568;
+    position: sticky; /* Overwritten from fixed */
+    top: 0;
 }
 
+/* Page container for flex layout */
+.page-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Main content area */
+.main-content {
+    flex-grow: 1;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+/* Sidebar left and right */
 .sidebar-left {
     left: 0;
     border-right: 1px solid #4a5568;
@@ -25,6 +43,7 @@ body {
     border-left: 1px solid #4a5568;
 }
 
+/* Sidebar headings */
 .sidebar h3 {
     color: #f7fafc;
     margin-bottom: 20px;
@@ -32,11 +51,13 @@ body {
     font-weight: bold;
 }
 
+/* Sidebar list */
 .sidebar ul {
     list-style-type: none;
     padding-left: 0;
 }
 
+/* Sidebar list items */
 .sidebar li {
     margin-bottom: 10px;
 }
@@ -50,7 +71,7 @@ body {
     transition: all 0.3s ease;
 }
 
-
+/* Category cards */
 .category-card {
     display: none;
 }
@@ -59,10 +80,12 @@ body {
     display: block;
 }
 
+/* Hover background */
 .hover-bg-orange:hover {
     background-color: #ed8936 !important;
 }
 
+/* Modal content styles */
 .modal-content {
     background-color: #2d3748;
     color: #f7fafc;
@@ -72,10 +95,12 @@ body {
     border-bottom: 1px solid #4a5568;
 }
 
+/* Close button styles */
 .btn-close {
     color: #f7fafc;
 }
 
+/* Form control styles */
 .form-control {
     background-color: #4a5568;
     color: #f7fafc;
@@ -89,6 +114,7 @@ body {
     box-shadow: 0 0 0 0.2rem rgba(237, 137, 54, 0.25);
 }
 
+/* Primary button styles */
 .btn-primary {
     background-color: #ed8936;
     border-color: #ed8936;
@@ -99,22 +125,26 @@ body {
     border-color: #dd6b20;
 }
 
-a:hover{
+/* Hover effects on links */
+a:hover {
     text-decoration: none;
     color: white;
 }
 
-#toggle-button{
+/* Toggle button styles */
+#toggle-button {
     background-color: rgb(24, 26, 27);
     display: flex;
     margin: 2% auto auto;
 }
 
+/* Card styles */
 card {
     height: 100%;
     display: flex;
     flex-direction: column;
 }
+
 .card-body {
     flex-grow: 1;
     display: flex;
@@ -122,9 +152,7 @@ card {
     justify-content: space-between;
 }
 
-
-
-/* Mobile Categories Dropdown Styles */
+/* Mobile categories dropdown */
 .categories-mobile {
     margin-bottom: 20px;
     background-color: #1a2636;
@@ -172,22 +200,19 @@ card {
     color: #ffffff;
 }
 
+/* Subcategory styles */
 .subcategory {
     display: none;
     list-style-type: none;
     background-color: #243447;
 }
 
+/* Category toggle */
 .category-toggle {
     float: right;
     transition: transform 0.3s ease;
     color: #7f8c8d;
 }
-
-
-
-
-
 
 @keyframes swipeRight {
     0% {
@@ -208,16 +233,12 @@ card {
     animation: swipeRight 0.5s ease-out forwards;
 }
 
-
-
-
 /* Category tree styles */
 .category-item-wrapper {
     display: flex;
     border-radius: 5px;
     transition: all 0.3s ease;
 }
-
 
 .category-toggle {
     background: none;
@@ -226,5 +247,3 @@ card {
     font-size: 12px;
     color: #e2e8f0;
 }
-
-
