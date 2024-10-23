@@ -30,6 +30,7 @@ ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     'cloudinary_storage',
+    'cloudinary',
     'django_cleanup.apps.CleanupConfig',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -81,7 +82,7 @@ AUTHENTICATION_BACKENDS = ['Store.backends.EmailBackend']
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db' / 'db.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
@@ -125,7 +126,7 @@ STATICFILES_DIRS = [
 ]
 
 MEDIA_URL = 'media/'
-MEDIA_ROOT = os.path.join(MEDIA_URL, 'photos')
+MEDIA_ROOT = os.path.join(MEDIA_URL, 'media')
 
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': 'dk2fdiuvb',
