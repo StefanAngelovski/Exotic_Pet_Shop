@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models import OneToOneField
 from django_ckeditor_5.fields import CKEditor5Field
+from cloudinary_storage.storage import MediaCloudinaryStorage
 
 
 # Create your models here.
@@ -30,7 +31,7 @@ class Category(models.Model):
 class Animal(models.Model):
     common_name = models.CharField(max_length=200, null=True, blank=True)
     scientific_name = models.CharField(max_length=200, null=True, blank=True)
-    image = models.ImageField(upload_to='animals/', null=True, blank=True)
+    image = models.ImageField(upload_to='animals/', null=True, blank=True, storage=MediaCloudinaryStorage())
     price = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
     description = CKEditor5Field('Description', null=True, blank=True)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True)
@@ -41,7 +42,7 @@ class Animal(models.Model):
 
 class SupplyCategory(models.Model):
     name = models.CharField(max_length=200)
-    icon = models.ImageField(upload_to='supply_categories/', null=True, blank=True)
+    icon = models.ImageField(upload_to='supply_categories/', null=True, blank=True, storage=MediaCloudinaryStorage())
 
     class Meta:
         verbose_name_plural = "Supply Categories"
@@ -54,7 +55,7 @@ class Supplies(models.Model):
     name = models.CharField(max_length=200)
     description = models.TextField(null=True, blank=True)
     price = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
-    image = models.ImageField(upload_to='supplies/', null=True, blank=True)
+    image = models.ImageField(upload_to='supplies/', null=True, blank=True, storage=MediaCloudinaryStorage())
     supply_category = models.ForeignKey(SupplyCategory, on_delete=models.SET_NULL, null=True, blank=True)
 
     class Meta:
