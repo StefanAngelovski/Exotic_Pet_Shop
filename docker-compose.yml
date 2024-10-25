@@ -1,6 +1,7 @@
 services:
   exotic-pet-shop:
     image: ghcr.io/42dotmk/exotic-pet-shop:latest
-    env_file: .env
+    env_file:
+      - ./ExoticPetShop/.env
     ports:
       - "12342:8000"
