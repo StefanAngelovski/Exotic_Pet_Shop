@@ -9,20 +9,22 @@ https://docs.djangoproject.com/en/5.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
-import os
+import os, environ
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+env = environ.Env()
+environ.Env.read_env()
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-pdq7cuz1+nrfw%$=uao=k6espbb60=2m2()&!9&po=e9aj9dsf'
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 CSRF_TRUSTED_ORIGINS = ['https://petshop.42.mk', 'https://exoticpetshop.physdev.site']
 ALLOWED_HOSTS = ['*']
@@ -130,9 +132,9 @@ MEDIA_URL = 'media/'
 MEDIA_ROOT = os.path.join(MEDIA_URL, 'media')
 
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': 'dk2fdiuvb',
-    'API_KEY': '521963696992472',
-    'API_SECRET': 'Kq7UxDyat1ef1A9_rE4J_0yC4ME'
+    'CLOUD_NAME': env('CLOUD_NAME'),
+    'API_KEY': env('API_KEY'),
+    'API_SECRET': env('API_SECRET'),
 }
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'

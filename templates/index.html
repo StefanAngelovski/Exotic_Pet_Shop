@@ -24,6 +24,13 @@
     </div>
 
     <main class="main-content">
+        <section class="banner d-flex align-items-center min-vh-100">
+            <div class="container text-center">
+                <h1 class="display-4 font-weight-bold mb-4">Welcome to Exotic Pet Shop</h1>
+                <p class="lead">Discover the perfect companion from our wide selection of exotic pets.</p>
+            </div>
+        </section>
+
         <!-- Categories Section for Mobile -->
         <div class="categories-mobile d-xl-none">
             <h3>Categories</h3>
@@ -35,11 +42,6 @@
             </ul>
         </div>
 
-        <section class="mb-5">
-            <h1 class="display-4 font-weight-bold mb-4">Welcome to Exotic Pet Shop</h1>
-            <p class="lead">Discover the perfect companion from our wide selection of exotic pets.</p>
-        </section>
-
         <!-- Animal list -->
         <section>
             <div class="bg-warning p-4 rounded-top" style="opacity: 90%">
@@ -48,7 +50,7 @@
             <div class="bg-warning p-4 rounded-bottom">
                 <div class="row">
                     {% for animal in animals %}
-                    <div class="col-12 col-md-4 col-lg-2 mb-4 category-card" data-category="{{ animal.category.id }}" data-parent-category="{{ animal.category.parent.id|default:animal.category.id }}">
+                    <div class="col-6 col-md-4 col-lg-2 mb-4 category-card" data-category="{{ animal.category.id }}" data-parent-category="{{ animal.category.parent.id|default:animal.category.id }}">
                         <div class="card h-100" style="background-color: rgb(24, 26, 27)">
                             <a href="{% url 'Store:animal_details' animal.id %}">
                                 <img src="{{ animal.image.url }}" class="card-img-top" alt="{{ animal.common_name }}">

@@ -2,7 +2,6 @@
     color: #fd7e14 !important;
 }
 
-
 input[type="text"], input[type="email"], input[type="tel"], textarea, select {
     width: 100%;
     padding: 10px;
@@ -102,16 +101,24 @@ input[type="text"], input[type="email"], input[type="tel"], textarea, select {
     box-shadow: none !important;
 }
 
-.navbar-collapse {
-    display: block;
+.container{
+    max-width: 70%;
+    width: 70%;
+    min-width: 70%;
 }
+
 @media (max-width: 768px) {
+    .container{
+        min-width: 100%;
+    }
+
     .navbar-toggler {
         display: block;
     }
 
     .navbar-collapse {
-        display: block;
+        display: flex;
+        justify-content: flex-start;
         width: 100%;
         position: absolute;
         top: 100%;
