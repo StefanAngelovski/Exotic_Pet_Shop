@@ -22,7 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-pdq7cuz1+nrfw%$=uao=k6espbb60=2m2()&!9&po=e9aj9dsf'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 CSRF_TRUSTED_ORIGINS = ['https://petshop.42.mk/', 'https://exoticpetshop.physdev.site/']
 ALLOWED_HOSTS = ['*']
