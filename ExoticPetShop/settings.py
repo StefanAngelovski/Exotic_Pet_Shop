@@ -85,7 +85,7 @@ AUTHENTICATION_BACKENDS = ['Store.backends.EmailBackend']
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'database/db.sqlite3',
+        'NAME': '/app/db/db.sqlite3',
     }
 }
 
