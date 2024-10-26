@@ -5,4 +5,4 @@ services:
     ports:
       - "12342:8000"
     volumes:
-      - /home/phys/petshop/db/db.sqlite3:/db/db.sqlite3
+      - sqlite:/db/
