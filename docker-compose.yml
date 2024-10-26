@@ -1,7 +1,8 @@
 services:
   exotic-pet-shop:
     image: ghcr.io/42dotmk/exotic-pet-shop:latest
-    env_file:
-      - ./ExoticPetShop/.env
+    env_file: .env
     ports:
       - "12342:8000"
+    volumes:
+      - ./db/db.sqlite3:/app/db.sqlite3
