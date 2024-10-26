@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Show all cards
     function showAllCards() {
         animalCards.forEach(card => {
-            card.style.display = 'block';
+            card.style.display = 'flex';
         });
     }
 
@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function toggleViewAllButton(categoryId) {
         // Only show "View All" button if "All Animals" is selected
         if (categoryId === 'all' && animalCards.length > initialCount) {
-            viewAllButton.style.display = 'block'; // Show the button
+            viewAllButton.style.display = 'flex'; // Show the button
             showInitialCards();
         } else {
             viewAllButton.style.display = 'none'; // Hide the button

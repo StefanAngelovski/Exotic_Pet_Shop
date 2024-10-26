@@ -24,7 +24,7 @@ load_dotenv()
 SECRET_KEY = 'django-insecure-pdq7cuz1+nrfw%$=uao=k6espbb60=2m2()&!9&po=e9aj9dsf'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 CSRF_TRUSTED_ORIGINS = ['https://petshop.42.mk', 'https://exoticpetshop.physdev.site']
 ALLOWED_HOSTS = ['*']
