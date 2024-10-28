@@ -1,14 +1,14 @@
 document.addEventListener('DOMContentLoaded', function() {
     const cards = document.querySelectorAll('.category-card');
 
-    function animateCards(index = 0) {
-        if (index < cards.length) {
-            setTimeout(() => {
-                cards[index].classList.add('animate');
-                animateCards(index + 1);
-            }, 60 * index);
-        }
-    }
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('animate');
+                observer.unobserve(entry.target); // Stop observing once animated
+            }
+        });
+    }, { threshold: 0.2 });
 
-    animateCards();
+    cards.forEach(card => observer.observe(card));
 });

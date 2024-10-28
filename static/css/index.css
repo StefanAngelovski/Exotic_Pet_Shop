@@ -294,7 +294,6 @@ card {
     animation: swipeRight 0.5s ease-out forwards;
 }
 
-/* Category tree styles */
 .category-item-wrapper {
     display: flex;
     border-radius: 5px;
