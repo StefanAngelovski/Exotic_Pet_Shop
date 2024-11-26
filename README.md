@@ -1,6 +1,5 @@
 # Exotic Pet Shop  
 
-![Small GIF of Features](https://github.com/user-attachments/assets/a88f544c-e1ef-4214-b4c9-107cf9b32eb0)  
 ![Main GIF of Features](https://github.com/user-attachments/assets/d187dff6-f7e3-4f27-884d-9690139d2be8)  
 
 ---
@@ -10,6 +9,8 @@
 Welcome to the **Exotic Pet Shop**, an open-source e-commerce platform dedicated to exotic pet enthusiasts. This project showcases a responsive website built with **Django** and **jQuery**, featuring secure user authentication, an intuitive interface, and robust database management.  
 
 The platform offers tools for listing exotic animals and their care supplies, managing user accounts, and facilitating secure purchases. Whether you're a reptile lover or an invertebrate enthusiast, this project is designed to connect exotic pet businesses with customers.  
+
+![Small GIF of Features](https://github.com/user-attachments/assets/a88f544c-e1ef-4214-b4c9-107cf9b32eb0)  
 
 🔐 **Admin Demo Login**:  
 - **Email**: admin@admin.com  
