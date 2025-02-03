@@ -172,7 +172,7 @@ def place_order(request):
     return redirect('Store:cart')  # Redirect back to cart if not a POST request
 
 
-@login_required
+@login_required(login_url='Store:login')
 def add_supply_to_cart(request, supply_id):
     # Get the supply object
     supply = get_object_or_404(Supplies, id=supply_id)
