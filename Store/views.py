@@ -174,25 +174,29 @@ def place_order(request):
 
 @login_required(login_url='Store:login')
 def add_supply_to_cart(request, supply_id):
-    # Get the supply object
-    supply = get_object_or_404(Supplies, id=supply_id)
+    if request.method == "POST":
+        # Get the supply object
+        supply = get_object_or_404(Supplies, id=supply_id)
 
-    # Get the user's cart
-    cart, created = Cart.objects.get_or_create(user=request.user)
+        # Get the user's cart
+        cart, created = Cart.objects.get_or_create(user=request.user)
 
-    # Check if the supply is already in the cart
-    cart_item, created = CartItem.objects.get_or_create(cart=cart, supply=supply)
+        # Check if the supply is already in the cart
+        cart_item, created = CartItem.objects.get_or_create(cart=cart, supply=supply)
 
-    if not created:
-        # If it already exists in the cart, just increase the quantity
-        cart_item.quantity += 1
-    cart_item.save()
+        if not created:
+            # If it already exists in the cart, just increase the quantity
+            cart_item.quantity += 1
+        cart_item.save()
 
-    # Recalculate total price
-    cart.total_price = sum(item.total_price for item in cart.items.all())
-    cart.save()
+        # Recalculate total price
+        cart.total_price = sum(item.total_price for item in cart.items.all())
+        cart.save()
 
-    return redirect('Store:supplies')
+        return redirect('Store:supplies')
+
+    # If method is not POST, return a 405 Method Not Allowed response
+    return HttpResponseNotAllowed(['POST'])
 
 
 @login_required(login_url='Store:login')
