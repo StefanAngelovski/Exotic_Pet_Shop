@@ -68,7 +68,7 @@
                         <li><a href="{% url 'Store:index' %}" class="text-white hover-text-orange">Home</a></li>
                         <li><a href="{% url 'Store:supplies' %}" class="text-white hover-text-orange">Feeders</a></li>
                         <li><a href="{% url 'Store:supplies' %}" class="text-white hover-text-orange">Supplies</a></li>
-                        <li><a href="#" class="text-white hover-text-orange">Care Guides</a></li>
+                        <li><a href="https://www.youtube.com/@ClintsReptiles/videos" class="text-white hover-text-orange">Care Guides</a></li>
                     </ul>
                 </div>
                 <div class="col-md-3 mb-4">
@@ -76,7 +76,11 @@
                     <ul class="list-unstyled">
                         <li><a href="{% url 'Store:contact' %}" class="text-white hover-text-orange">Contact Us</a></li>
                         <li><a href="#" class="text-white hover-text-orange">FAQ</a></li>
-                        <li><a href="{% url 'Store:userProfile' %}" class="text-white hover-text-orange">Shipping Information</a></li>
+                        {% if user.is_authenticated %}
+                            <li><a href="{% url 'Store:userProfile' %}" class="text-white hover-text-orange">Shipping Information</a></li>
+                        {% else %}
+                            <li><a href="{% url 'Store:login' %}" class="text-white hover-text-orange">Shipping Information</a></li>
+                        {% endif %}
                         <li><a href="#" class="text-white hover-text-orange">Return Policy</a></li>
                     </ul>
                 </div>

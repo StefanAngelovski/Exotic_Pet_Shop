@@ -8,7 +8,7 @@ body {
 
 .banner {
     background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-                url("https://d20zyr0oabjxc2.cloudfront.net/static/img/home/green_tree_python_home.jpg") no-repeat center;
+                url("https://res.cloudinary.com/dk2fdiuvb/image/upload/v1743104047/projects/otza7ohywmj8geqmps5y.avif") no-repeat center;
     background-size: cover;
     width: 100%;
     min-height: 500px;
